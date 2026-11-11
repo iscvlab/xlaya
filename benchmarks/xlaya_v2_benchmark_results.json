@@ -1,0 +1,311 @@
+{
+  "schema_version": "2.0.0",
+  "package": "iscvlab/xlaya",
+  "version": "2.0.0",
+  "hardware": {
+    "gpu": "NVIDIA GeForce RTX 5060 Ti (16 GB VRAM)",
+    "torch": "2.13.0+cu130",
+    "laya": "0.4.31",
+    "vegaml": "0.16.1",
+    "output_tokens_generated": 0
+  },
+  "axis1_latency_and_batch_throughput": {
+    "cold_cli_32_chunks": {
+      "v1_baseline_s": 74.51,
+      "v2_wall_s": 9.41,
+      "v2_engine_ms": 8459.7,
+      "speedup_x": 7.92,
+      "notes": "Offline-first local HF snapshot resolution + length-sorted predict_batch(batch_size=32)"
+    },
+    "warm_resident_mcp": {
+      "server": "xlaya_mcp_server.py",
+      "single_predict_ms": 29.99,
+      "warm_32_chunk_triage_ms": 662.49,
+      "nli_triad_decisions": 96,
+      "per_question_ms": 6.9,
+      "warm_vega_08b_ms": 176.18
+    },
+    "stage0_pure_python_sieve": {
+      "specs_scanned": 27,
+      "chunks_evaluated": 1165,
+      "median_ms": 170.29,
+      "per_chunk_ms": 0.146,
+      "throughput_chunks_per_sec": 6841.3,
+      "full_tokens": 173666,
+      "top5_tokens": 1137,
+      "token_savings_pct": 99.35,
+      "compression_ratio_x": 152.74
+    },
+    "official_bench_predict_batch": {
+      "questions_per_state_default": 4,
+      "english_modernbert_large": {
+        "t4_reference_1_state_ms": 39.5,
+        "batch_sizes": {
+          "1": {
+            "batched_ms": 26.4,
+            "per_question_ms": 6.6,
+            "speedup_vs_t4_x": 1.5
+          },
+          "4": {
+            "batched_ms": 55.4,
+            "looped_ms": 153.2,
+            "speedup_x": 2.8,
+            "questions_per_sec": 288.8
+          },
+          "8": {
+            "batched_ms": 97.0,
+            "looped_ms": 263.8,
+            "speedup_x": 2.7,
+            "questions_per_sec": 329.8,
+            "per_question_ms": 3.03
+          },
+          "64": {
+            "batched_ms": 853.8,
+            "looped_ms": 2119.4,
+            "speedup_x": 2.5,
+            "questions_per_sec": 299.8
+          }
+        }
+      },
+      "multilingual_mmbert_base": {
+        "t4_reference_1_state_ms": 32.8,
+        "batch_sizes": {
+          "1": {
+            "batched_ms": 20.7,
+            "per_question_ms": 5.18,
+            "speedup_vs_t4_x": 1.58
+          },
+          "8": {
+            "batched_ms": 37.2,
+            "looped_ms": 218.5,
+            "speedup_x": 5.9,
+            "questions_per_sec": 859.1,
+            "per_question_ms": 1.16
+          },
+          "16": {
+            "batched_ms": 80.1,
+            "looped_ms": 522.4,
+            "speedup_x": 6.5,
+            "questions_per_sec": 798.9
+          },
+          "64": {
+            "batched_ms": 362.4,
+            "looped_ms": 1786.6,
+            "speedup_x": 4.9,
+            "questions_per_sec": 706.5
+          }
+        }
+      },
+      "router_mixed_en_hi": {
+        "questions_per_state": 3,
+        "language_mix": "50% EN / 50% HI",
+        "batch_sizes": {
+          "32": {
+            "batched_ms": 114.6,
+            "looped_ms": 1016.2,
+            "speedup_x": 8.9,
+            "states_per_sec": 279.3,
+            "questions_per_sec": 837.9
+          },
+          "64": {
+            "batched_ms": 236.4,
+            "looped_ms": 1950.6,
+            "speedup_x": 8.3,
+            "states_per_sec": 270.7,
+            "questions_per_sec": 812.1
+          }
+        }
+      }
+    }
+  },
+  "axis2_numerical_consistency": {
+    "total_comparisons": 432,
+    "total_label_flips": 0,
+    "models": {
+      "english": {
+        "comparisons": 144,
+        "max_abs_dp": 0.0058,
+        "label_flips": 0
+      },
+      "multilingual": {
+        "comparisons": 144,
+        "max_abs_dp": 0.0026,
+        "label_flips": 0
+      },
+      "router_predict_batch": {
+        "comparisons": 144,
+        "max_abs_dp": 0.0065,
+        "label_flips": 0
+      }
+    }
+  },
+  "axis3_accuracy_and_conformal_calibration": {
+    "routing_labels_csv_benchmark": {
+      "dataset": "routing_labels.csv",
+      "fit_rows": 40,
+      "held_out_test_rows": 20,
+      "models": {
+        "laya_typed_decisions_zero_shot": {
+          "team_acc": 0.75,
+          "ece": 0.188,
+          "urgency_acc": 0.4,
+          "urgency_mae": 0.671,
+          "median_ms": 25.75
+        },
+        "laya_english_zero_shot": {
+          "team_acc": 0.8,
+          "ece": 0.283,
+          "urgency_acc": 0.4,
+          "urgency_mae": 0.78,
+          "median_ms": 31.73
+        },
+        "vega_08b_cold": {
+          "team_acc": 0.6,
+          "ece": 0.222,
+          "urgency_acc": 0.4,
+          "urgency_ece": 0.412,
+          "urgency_mae": 0.65,
+          "set_sizes": {
+            "1": 13,
+            "2": 7
+          },
+          "abstain": 12,
+          "routes": {
+            "auto": 8,
+            "review": 12
+          },
+          "median_ms": 64.36
+        },
+        "vega_08b_fitted_40rows": {
+          "fit_s": 7.58,
+          "team_acc": 0.9,
+          "ece": 0.214,
+          "urgency_acc": 0.4,
+          "urgency_ece": 0.059,
+          "urgency_mae": 0.65,
+          "set_sizes": {
+            "2": 1,
+            "4": 6,
+            "5": 13
+          },
+          "abstain": 0,
+          "routes": {
+            "review": 20
+          },
+          "median_ms": 103.36
+        }
+      }
+    },
+    "joint_nli_contradiction_triad": {
+      "formula": "P_eff = P(is_relevant) * P(contradicts_ssot) * (1 - P(is_consistent))",
+      "counter_anchor_accuracy": "8/8 (100%)",
+      "false_positives_on_verbatim_consistent_off_topic": 0,
+      "probes": {
+        "direct_conflict_peff": 0.6735,
+        "numeric_swap_peff": 0.6806,
+        "ood_pgbouncer_conflict_peff": 0.7553,
+        "ood_pgbouncer_consistent_peff": 0.0456,
+        "ood_separation_ratio_x": 16.56,
+        "whole_file_73k_vega_conflict_peff": 0.6569,
+        "whole_file_73k_vega_consistent_peff": 0.0412
+      }
+    },
+    "xerj_1108_watcher_boundary_gate": {
+      "issue_ref": "xerj-org/xerj#1108",
+      "corpus_size_emails": 120,
+      "confidence_threshold": 0.8,
+      "baseline": {
+        "wrong_and_confident_fires": "24/98",
+        "wrong_and_confident_rate_pct": 24.49,
+        "status": "FAIL"
+      },
+      "xlaya_standalone_gate": {
+        "wrong_and_confident_fires": "0/30",
+        "wrong_and_confident_rate_pct": 0.0,
+        "status": "PASS"
+      },
+      "agreement_gate": {
+        "wrong_and_confident_fires": "2/57",
+        "wrong_and_confident_rate_pct": 3.51,
+        "status": "PASS"
+      },
+      "calibrated_ensemble": {
+        "wrong_and_confident_fires": "0/36",
+        "wrong_and_confident_rate_pct": 0.0,
+        "overall_accuracy": "96/120 (80.0%)",
+        "status": "PASS"
+      }
+    }
+  },
+  "axis4_presets_and_cross_lingual": {
+    "route_accuracy": "5/5 (100%)",
+    "languages_verified": [
+      "EN",
+      "DE",
+      "HI",
+      "JA",
+      "TH"
+    ],
+    "presets": [
+      {
+        "preset": "triage",
+        "questions": 5,
+        "ms": 49.8,
+        "answers": {
+          "intent": "cancellation",
+          "is_urgent": 0.342,
+          "frustration": 1.808,
+          "refund_requested": 0.148,
+          "churn_risk": 0.79
+        }
+      },
+      {
+        "preset": "email",
+        "questions": 5,
+        "ms": 32.71,
+        "answers": {
+          "category": "security",
+          "is_spam": 0.993,
+          "is_phishing": 0.984,
+          "urgency": 1.505,
+          "needs_reply": 0.192
+        }
+      },
+      {
+        "preset": "moderation",
+        "questions": 5,
+        "ms": 27.1,
+        "answers": {
+          "toxic": 0.0,
+          "harassment": 0.0,
+          "threat": 0.0,
+          "spam": 0.0,
+          "severity": 0.34
+        }
+      },
+      {
+        "preset": "guard",
+        "questions": 5,
+        "ms": 40.74,
+        "answers": {
+          "jailbreak": 0.956,
+          "prompt_injection": 1.0,
+          "sensitive_data": 0.265,
+          "harm_severity": 2.032,
+          "topic": "coding"
+        }
+      },
+      {
+        "preset": "router",
+        "questions": 4,
+        "ms": 49.56,
+        "answers": {
+          "difficulty": 2.078,
+          "domain": "math_or_logic",
+          "needs_tools": 0.089,
+          "is_sensitive": 0.0
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,178 @@
+# XLaya Semantic Decision & Conformal Triage Sidecar Installer (Windows PowerShell) - iscvlab/xlaya
+# Installs skills/xlaya into host skill roots that exist on this machine (or explicit target flags).
+
+param(
+    [switch]$Antigravity,
+    [switch]$Claude,
+    [switch]$Grok,
+    [switch]$Agents,
+    [switch]$Codex,
+    [switch]$All,
+    [string]$Workspace = "",
+    [string]$Target = ""
+)
+
+$ErrorActionPreference = "Stop"
+$ScriptDir = Split-Path -Parent $PSScriptRoot
+$SkillsSrc = Join-Path $ScriptDir "skills"
+
+$LegacyDirs = @(
+    "layax",
+    "laya"
+)
+
+Write-Host "============================================================" -ForegroundColor Cyan
+Write-Host "  * XLaya (v2.0.0) - iscvlab/xlaya Windows Installer" -ForegroundColor Cyan
+Write-Host "============================================================" -ForegroundColor Cyan
+Write-Host "Source: $SkillsSrc"
+
+$installedPhysicalDirs = @{}
+
+function Resolve-PhysicalPath([string]$PathToResolve) {
+    $full = [System.IO.Path]::GetFullPath($PathToResolve)
+    $parts = @()
+    $curr = $full
+    while (-not [string]::IsNullOrEmpty($curr)) {
+        if (Test-Path -LiteralPath $curr) {
+            $item = Get-Item -LiteralPath $curr -Force
+            if (($item.Attributes -band [System.IO.FileAttributes]::ReparsePoint) -and $item.Target) {
+                $targetVal = if ($item.Target -is [array]) { $item.Target[0] } else { $item.Target }
+                if (-not [System.IO.Path]::IsPathRooted($targetVal)) {
+                    $targetVal = Join-Path (Split-Path -Parent $curr) $targetVal
+                }
+                $curr = [System.IO.Path]::GetFullPath($targetVal)
+                continue
+            }
+        }
+        $parent = Split-Path -Parent $curr
+        if ([string]::IsNullOrEmpty($parent) -or $parent -eq $curr) {
+            $parts = ,$curr + $parts
+            break
+        }
+        $leaf = Split-Path -Leaf $curr
+        $parts = ,$leaf + $parts
+        $curr = $parent
+    }
+    $resolved = $parts[0]
+    for ($i = 1; $i -lt $parts.Count; $i++) {
+        $resolved = Join-Path $resolved $parts[$i]
+    }
+    return [System.IO.Path]::GetFullPath($resolved).TrimEnd('\', '/').ToLowerInvariant()
+}
+
+function Install-Skills([string]$TargetDir, [string]$PlatformName) {
+    if (-not (Test-Path $TargetDir)) {
+        New-Item -ItemType Directory -Path $TargetDir -Force | Out-Null
+    }
+    $physTarget = Resolve-PhysicalPath $TargetDir
+    $physSrc = Resolve-PhysicalPath $SkillsSrc
+    if ($physTarget -eq $physSrc) {
+        Write-Host "`nSkipping $PlatformName ($TargetDir) - source and destination resolve to the same physical directory." -ForegroundColor DarkGray
+        return
+    }
+    if ($installedPhysicalDirs.ContainsKey($physTarget)) {
+        Write-Host "`nSkipping $PlatformName ($TargetDir) - physical directory already updated via $($installedPhysicalDirs[$physTarget])." -ForegroundColor DarkGray
+        return
+    }
+    $installedPhysicalDirs[$physTarget] = $PlatformName
+
+    Write-Host "`nInstalling into $PlatformName ($TargetDir)..." -ForegroundColor Yellow
+
+    foreach ($oldName in $LegacyDirs) {
+        $oldPath = Join-Path $TargetDir $oldName
+        if (Test-Path $oldPath) {
+            Remove-Item $oldPath -Recurse -Force -ErrorAction SilentlyContinue
+            if (Test-Path $oldPath) {
+                cmd /c "rmdir /s /q `"$oldPath`"" 2>$null
+            }
+            Write-Host "  - Removed legacy /$oldName" -ForegroundColor DarkGray
+        }
+    }
+
+    Get-ChildItem -Directory $SkillsSrc | ForEach-Object {
+        $skillName = $_.Name
+        $dest = Join-Path $TargetDir $skillName
+
+        if ((Test-Path $dest) -and ((Resolve-PhysicalPath $_.FullName) -eq (Resolve-PhysicalPath $dest))) {
+            Write-Host "  [OK] Skipped /$skillName (source == destination)" -ForegroundColor DarkGray
+            return
+        }
+
+        if (Test-Path $dest) {
+            Remove-Item $dest -Recurse -Force -ErrorAction SilentlyContinue
+            if (Test-Path $dest) {
+                cmd /c "rmdir /s /q `"$dest`"" 2>$null
+            }
+        }
+
+        if (Test-Path $dest) {
+            Copy-Item (Join-Path $_.FullName "*") $dest -Recurse -Force
+        } else {
+            Copy-Item $_.FullName $dest -Recurse -Force
+        }
+        Write-Host "  [OK] Installed /$skillName" -ForegroundColor Green
+    }
+}
+
+$customTarget = if (-not [string]::IsNullOrEmpty($Target)) { $Target } elseif ($env:AGENT_SKILLS_DIR) { $env:AGENT_SKILLS_DIR } else { "" }
+$noHostFlag = -not $Antigravity.IsPresent -and -not $Claude.IsPresent -and -not $Grok.IsPresent -and -not $Agents.IsPresent -and -not $Codex.IsPresent -and [string]::IsNullOrEmpty($Workspace) -and [string]::IsNullOrEmpty($customTarget)
+
+if (-not [string]::IsNullOrEmpty($customTarget)) {
+    Install-Skills $customTarget "Custom Agent Target ($customTarget)"
+}
+
+$geminiDir = Join-Path $env:USERPROFILE ".gemini\config\skills"
+if ($Antigravity.IsPresent -or $All.IsPresent -or ($noHostFlag -and (Test-Path (Join-Path $env:USERPROFILE ".gemini")))) {
+    Install-Skills $geminiDir "Gemini / Antigravity"
+}
+
+$claudeDir = Join-Path $env:USERPROFILE ".claude\skills"
+if ($Claude.IsPresent -or $All.IsPresent -or ($noHostFlag -and (Test-Path (Join-Path $env:USERPROFILE ".claude")))) {
+    Install-Skills $claudeDir "Claude Code"
+}
+
+$grokHome = if ($env:GROK_HOME) { $env:GROK_HOME } else { Join-Path $env:USERPROFILE ".grok" }
+$grokDir = Join-Path $grokHome "skills"
+if ($Grok.IsPresent -or $All.IsPresent -or ($noHostFlag -and (Test-Path $grokHome))) {
+    Install-Skills $grokDir "Grok"
+}
+
+$agentsDir = Join-Path $env:USERPROFILE ".agents\skills"
+if ($Agents.IsPresent -or $All.IsPresent -or ($noHostFlag -and (Test-Path (Join-Path $env:USERPROFILE ".agents")))) {
+    Install-Skills $agentsDir "Universal .agents (Cursor / Codex / Windsurf / Local LLM Agents)"
+}
+
+$codexDir = Join-Path $env:USERPROFILE ".codex\skills"
+if ($Codex.IsPresent -or $All.IsPresent -or ($noHostFlag -and (Test-Path (Join-Path $env:USERPROFILE ".codex")))) {
+    Install-Skills $codexDir "Codex (.codex)"
+}
+
+if ($All.IsPresent -or $noHostFlag) {
+    Get-ChildItem -Directory -Force $env:USERPROFILE -ErrorAction SilentlyContinue | Where-Object { $_.Name.StartsWith(".") } | ForEach-Object {
+        foreach ($sub in @("skills", "config\skills")) {
+            $cand = Join-Path $_.FullName $sub
+            if (Test-Path $cand) {
+                $physCand = Resolve-PhysicalPath $cand
+                if (-not $installedPhysicalDirs.ContainsKey($physCand)) {
+                    Install-Skills $cand "Auto-Discovered Agent ($($_.Name)/$($sub.Replace('\', '/')))"
+                }
+            }
+        }
+    }
+}
+
+if (-not [string]::IsNullOrEmpty($Workspace) -and (Test-Path $Workspace)) {
+    Install-Skills (Join-Path $Workspace ".agents\skills") "Workspace .agents ($Workspace)"
+    $wsClaude = Join-Path $Workspace ".claude\skills"
+    if (Test-Path (Join-Path $Workspace ".claude") -or $Claude.IsPresent -or $All.IsPresent) {
+        Install-Skills $wsClaude "Workspace .claude ($Workspace)"
+    }
+    $wsGrok = Join-Path $Workspace ".grok\skills"
+    if (Test-Path (Join-Path $Workspace ".grok") -or $Grok.IsPresent) {
+        Install-Skills $wsGrok "Workspace .grok ($Workspace)"
+    }
+}
+
+Write-Host "`n============================================================" -ForegroundColor Cyan
+Write-Host "  [OK] XLaya (v2.0.0) Installation Complete! /xlaya skill ready." -ForegroundColor Green
+Write-Host "============================================================" -ForegroundColor Cyan
