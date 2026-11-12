@@ -22,7 +22,7 @@ $LegacyDirs = @(
 )
 
 Write-Host "============================================================" -ForegroundColor Cyan
-Write-Host "  * XLaya (v2.0.0) - iscvlab/xlaya Windows Installer" -ForegroundColor Cyan
+Write-Host "  * XLaya (v2.1.0) - iscvlab/xlaya Windows Installer" -ForegroundColor Cyan
 Write-Host "============================================================" -ForegroundColor Cyan
 Write-Host "Source: $SkillsSrc"
 
@@ -174,5 +174,5 @@ if (-not [string]::IsNullOrEmpty($Workspace) -and (Test-Path $Workspace)) {
 }
 
 Write-Host "`n============================================================" -ForegroundColor Cyan
-Write-Host "  [OK] XLaya (v2.0.0) Installation Complete! /xlaya skill ready." -ForegroundColor Green
+Write-Host "  [OK] XLaya (v2.1.0) Installation Complete! /xlaya skill ready." -ForegroundColor Green
 Write-Host "============================================================" -ForegroundColor Cyan

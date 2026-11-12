@@ -1,6 +1,6 @@
 # XLaya (iscvlab/xlaya)
 
-> 3-Stage System 1 → System 1.5 Semantic Decision, Joint NLI Contradiction Triad & Conformal Triage Sidecar (`v2.0.0`), powered by `laya 0.4.31+` (`ModernBERT-large` & `mmBERT`) and `vega-U` (`vegaml 0.16.1+`), delivered as a warm resident Model Context Protocol server (`xlaya_mcp_server.py`, `~30 ms` warm inference, `859.1 q/s` batched), a standalone CLI (`laya_triage.py`), and a universal AI agent skill (`skills/xlaya/SKILL.md`).
+> 3-Stage System 1 → System 1.5 Semantic Decision, Joint NLI Contradiction Triad, Thorough Scan & Conformal Triage Sidecar (`v2.1.0`), powered by `laya 0.4.31+` (`ModernBERT-large` `en`, `subfolder="typed-decisions"`, calibrated `0.45*en + 0.55*typed` ensemble & `mmBERT`) and `vega-U` (`vegaml 0.16.1+`, `auto`/`0.8b`/`4b`/`gemma-1b`/`27b`), delivered as a warm resident Model Context Protocol server (`xlaya_mcp_server.py`, `6` tools, `~30 ms` warm inference, `859.1 q/s` batched), a standalone CLI (`laya_triage.py`), and a universal AI agent skill (`skills/xlaya/SKILL.md`).
 
 ## One-Prompt Universal Agent Install
 
@@ -10,9 +10,9 @@ Clone https://github.com/iscvlab/xlaya and install skills/xlaya into my active a
 
 ## Core Entrypoints & Documentation
 
-- [README.md](README.md): Architecture, 4-axis RTX 5060 Ti benchmarks, one-prompt agent installer, MCP tools, and CLI usage.
-- [laya_triage.py](laya_triage.py): Standalone 3-stage CLI & programmatic engine (`--mode shortlist|contradiction|rubric|classify`, `--vega`, `--whole-file`, `--self-test`).
-- [xlaya_mcp_server.py](xlaya_mcp_server.py): Zero-extra-dependency JSON-RPC 2.0 `stdio` MCP server (`xlaya_status`, `xlaya_triage`, `xlaya_predict`, `xlaya_preload`, `xlaya_unload`) with idle VRAM auto-unload (`LAYA_IDLE_TTL_SEC`).
+- [README.md](README.md): Architecture, 5 pure-local high-accuracy upgrades (`v2.1.0`), 4-axis RTX 5060 Ti benchmarks, one-prompt agent installer, 6 MCP tools, and CLI usage.
+- [laya_triage.py](laya_triage.py): Standalone 3-stage CLI & programmatic engine (`--mode shortlist|contradiction|rubric|classify`, `--lang auto|en|multi|typed|ensemble`, `--thorough`, `--rubric-preset`, `--views 1|2|3`, `--fit-rows`, `--policy-path`, `--image|--audio|--video`, `--vega`, `--vega-model auto|0.8b|4b|gemma-1b|27b`, `--whole-file`, `--self-test`).
+- [xlaya_mcp_server.py](xlaya_mcp_server.py): Zero-extra-dependency JSON-RPC 2.0 `stdio` MCP server (`xlaya_status`, `xlaya_triage`, `xlaya_predict`, `xlaya_fit`, `xlaya_preload`, `xlaya_unload`) with idle VRAM auto-unload (`LAYA_IDLE_TTL_SEC`).
 - [skills/xlaya/SKILL.md](skills/xlaya/SKILL.md): Portable AI agent skill specification (`/xlaya`, `/laya`) and chained `/x*` combinations (`/xsync /xlaya`, `/xbrief /xlaya`, `/xdeep-research /xlaya`, `/xpublish /xlaya`, `/xlaya /xultra`, `/xlearn /xlaya`, `/xocr /xlaya`).
 - [scripts/install.ps1](scripts/install.ps1): Windows PowerShell installer (`./scripts/install.ps1 -All` or `-Target <dir>`).
 - [scripts/install.sh](scripts/install.sh): macOS and Linux installer (`./scripts/install.sh --all` or `--target <dir>`).

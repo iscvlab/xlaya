@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reproducible 3-Stage Benchmark & Verification Harness for iscvlab/xlaya (v2.0.0)."""
+"""Reproducible 3-Stage Benchmark & Verification Harness for iscvlab/xlaya (v2.1.0)."""
 
 from __future__ import annotations
 
@@ -215,6 +215,22 @@ def _bench_neural_probes(full_mode: bool) -> List[Tuple[str, str, str]]:
                 )
             )
 
+            res_ens = laya_triage.predict_direct(
+                state="ModernBERT-large uses a 512-token context window and outputs 0 LLM tokens.",
+                questions=questions,
+                model="ensemble",
+            )
+            ens_rel = res_ens["result"]["answers"]["is_relevant"]
+            dis_v = ens_rel.get("disagreement", 0.0)
+            agr_v = ens_rel.get("model_agreement", 1.0)
+            rows.append(
+                (
+                    "Stage 1 Multi-Encoder Jury (`model=\"ensemble\"`)",
+                    f"{res_ens['elapsed_ms']:.2f} ms",
+                    f"`disagreement={dis_v:.3f}`, `agreement={agr_v:.3f}`",
+                )
+            )
+
             if status.get("vegaml_available"):
                 v_res = laya_triage.predict_direct(
                     state="ModernBERT-large uses a 512-token context window.",
@@ -226,13 +242,18 @@ def _bench_neural_probes(full_mode: bool) -> List[Tuple[str, str, str]]:
                     },
                     vega=True,
                     vega_model="0.8b",
+                    views=3,
                 )
                 v_ans = v_res["result"]["answers"]["chk"]
+                v_detail = (
+                    f"`route={v_ans.get('route')}`, `abstain={v_ans.get('abstain')}`, "
+                    f"`view_agreement={v_ans.get('view_agreement')}`"
+                )
                 rows.append(
                     (
-                        "Stage 2 `vega-U (0.8b)` Conformal Probe",
+                        "Stage 2 `vega-U (0.8b, views=3)` Conformal Probe",
                         f"{v_res['elapsed_ms']:.2f} ms",
-                        f"`route={v_ans.get('route')}`, `abstain={v_ans.get('abstain')}`",
+                        v_detail,
                     )
                 )
     finally:
@@ -270,13 +291,13 @@ def _verify_receipt_json() -> Tuple[str, str, str]:
 
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Reproducible benchmark & verification suite for iscvlab/xlaya (v2.0.0)."
+        description="Reproducible benchmark & verification suite for iscvlab/xlaya (v2.1.0)."
     )
     parser.add_argument(
         "--mode",
         choices=["quick", "full"],
         default="quick",
-        help="Benchmark depth: 'quick' (< 15s Stage 0 + warm probe) or 'full' (+ batched & Vega-U)",
+        help="Benchmark depth: 'quick' (< 15s Stage 0 + warm probe) or 'full' (+ batched, ensemble & Vega-U)",
     )
     args = parser.parse_args(argv)
 
@@ -289,7 +310,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     rows.extend(_bench_neural_probes(full_mode=(args.mode == "full")))
     total_ms = (time.perf_counter() - t_start) * 1000.0
 
-    print(f"### XLaya v2.0.0 Verification Summary (`mode={args.mode}`, total `{total_ms:.1f} ms`)\n")
+    print(f"### XLaya v2.1.0 Verification Summary (`mode={args.mode}`, total `{total_ms:.1f} ms`)\n")
     print("| Benchmark Check | Latency | Verified Result |")
     print("| :--- | :---: | :--- |")
     for check_name, latency_str, detail_str in rows:

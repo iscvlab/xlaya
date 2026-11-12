@@ -1,27 +1,27 @@
 # XLaya (`/xlaya`) - 3-Stage System 1 → System 1.5 Semantic Triage, Joint NLI Contradiction Triad & Conformal Decision Sidecar
 
-[![Release](https://img.shields.io/badge/Release-v2.0.0-121417?style=flat-square)](https://github.com/iscvlab/xlaya)
+[![Release](https://img.shields.io/badge/Release-v2.1.0-121417?style=flat-square)](https://github.com/iscvlab/xlaya)
 [![License: MIT](https://img.shields.io/badge/License-MIT-059669?style=flat-square)](./LICENSE)
-[![Warm MCP](https://img.shields.io/badge/Warm%20MCP-~30%20ms-D97706?style=flat-square)](#2-empirical-4-axis-benchmarks-rtx-5060-ti-16-gb-vram)
+[![Warm MCP](https://img.shields.io/badge/Warm%20MCP-~30%20ms%20(6%20Tools)-D97706?style=flat-square)](#2-empirical-4-axis-benchmarks-rtx-5060-ti-16-gb-vram)
 [![Batch Speed](https://img.shields.io/badge/Batch%20Speed-859%20q%2Fs%20(8.9x)-2563EB?style=flat-square)](#axis-1-cold-vs-resident-warm-mcp--official-predict_batch-throughput)
 [![Engines](https://img.shields.io/badge/Engines-Laya%20v0.4.31%20%2B%20VegaML%20v0.16.1-7C3AED?style=flat-square)](https://github.com/NandhaKishorM/laya)
 [![Watcher Gate](https://img.shields.io/badge/Watcher%20Gate-0.00%25%20False--Confident%20(XERJ%20%231108)-059669?style=flat-square)](#axis-3-conformal-calibration-joint-nli-contradiction-triad--xerj-1108-watcher-gate)
 [![Agents](https://img.shields.io/badge/Agents-Any%20AI%20Agent-8A2BE2?style=flat-square)](#4-universal-installation--repository-layout)
 [![Lab](https://img.shields.io/badge/Lab-ISCV%20%7C%20Isocurve%20Research%20Lab%20(%40iscvlab)-121417?style=flat-square)](https://github.com/iscvlab)
 
-**XLaya** (`iscvlab/xlaya`, slash command `/xlaya`, legacy alias `/laya`) is a non-autoregressive **3-Stage System 1 → System 1.5 Semantic Decision, Joint NLI Contradiction Triad & Conformal Triage Sidecar** engineered by **[ISCV | Isocurve Research Lab (`@iscvlab`)](https://github.com/iscvlab)**. Powered by **[`laya 0.4.31+`](https://github.com/NandhaKishorM/laya)** (`ModernBERT-large` & `mmBERT`, `output_tokens: 0`) and **`vega-U` (`vegaml 0.16.1+`)**, it runs as a **warm resident JSON-RPC 2.0 `stdio` MCP server (`xlaya_mcp_server.py`, `~30 ms` warm inference)**, a **standalone Python CLI (`laya_triage.py`)**, and a **portable AI Agent Skill (`skills/xlaya/SKILL.md`)** across **any AI coding agent — cloud, IDE, CLI, or local LLM** (`Claude`, `Grok`, `Gemini / Antigravity`, `Cursor`, `Codex`, `Ollama`, `OpenHands`, `Cline`, etc.).
+**XLaya** (`iscvlab/xlaya`, slash command `/xlaya`, legacy alias `/laya`) is a 100% pure-local, non-autoregressive **3-Stage System 1 → System 1.5 Semantic Decision, Joint NLI Contradiction Triad, Thorough Scan & Conformal Triage Sidecar** engineered by **[ISCV | Isocurve Research Lab (`@iscvlab`)](https://github.com/iscvlab)**. Powered by **[`laya 0.4.31+`](https://github.com/NandhaKishorM/laya)** (`ModernBERT-large` `en`, `subfolder="typed-decisions"`, calibrated `0.45*en + 0.55*typed` ensemble & `mmBERT`, `output_tokens: 0`) and **`vega-U` (`vegaml 0.16.1+`, `0.8b` / `4b` / `gemma-1b` / `27b`)**, it runs as a **warm resident JSON-RPC 2.0 `stdio` MCP server (`xlaya_mcp_server.py`, `6` tools, `~30 ms` warm inference)**, a **standalone Python CLI (`laya_triage.py`)**, and a **portable AI Agent Skill (`skills/xlaya/SKILL.md`)** across **any AI coding agent — cloud, IDE, CLI, or local LLM** (`Claude`, `Grok`, `Gemini / Antigravity`, `Cursor`, `Codex`, `Ollama`, `OpenHands`, `Cline`, etc.).
 
 ---
 
-## ⚡ TL;DR - Performance & Accuracy at a Glance (`v2.0.0`)
+## ⚡ TL;DR - Performance & Accuracy at a Glance (`v2.1.0`)
 
 - **Zero-Token System 1 → System 1.5 Cascade (`output_tokens: 0`)**: Prunes **`99.35%` (`152.7×`)** of low-signal repository tokens before expensive System 2 LLM reading (`173,666` → `1,137` tokens in `170.3 ms`), cutting cold 32-chunk CLI sweeps by **`7.92×` (`74.51 s` → `9.41 s`)** and reaching **`29.99 ms` single-state / `662.5 ms` 32-chunk (`96`-decision) warm latency** via the resident MCP server.
 - **Batched Cross-Lingual Determinism (`859.1 q/s`, `0 / 432` Flips)**: Length-sorted `predict_batch` accelerates mixed `50% EN / 50% HI` routing by **`8.9×` (`837.9 q/s`)** and `mmBERT` multilingual batches to **`859.1 q/s` (`1.16 ms/question`, `5.9×` at `B = 8`; up to `6.5×` at `B = 16`)** with **`0` discrete label flips** across `432` paired comparisons and **`5 / 5` (`100%`)** routing across `EN`, `DE`, `HI`, `JA`, and `TH`.
-- **Calibrated Contradiction & Conformal Verification**: Combines a **3-Question Joint NLI Contradiction Triad** (**`8 / 8 = 100%`** counter-anchor accuracy, **`16.6×`** OOD conflict separation, `0` false positives) with **`vega-U` conformal prediction sets** (**`90.0%`** held-out team accuracy after a `7.58 s` 40-row fit) and **XERJ `#1108` Watcher Boundary gating** (**`0.00%` wrong-and-confident fires** vs `24.49%` baseline FAIL).
+- **Calibrated Contradiction, Ensemble Watcher Gate & Persistent Conformal Policies**: Combines a **3-Question Joint NLI Contradiction Triad** (**`8 / 8 = 100%`** counter-anchor accuracy, **`16.6×`** OOD conflict separation, `0` false positives), a **calibrated `0.45*en + 0.55*typed` Stage 1 ensemble** with **`disagreement ≥ 0.15` gate** (**`0.00%` wrong-and-confident fires** vs `24.49%` baseline FAIL on XERJ `#1108`), **`views=1|2|3` multi-view debiasing**, **`--thorough` 4-facet decomposed rubric scans**, **local multimodal (`image`/`audio`/`video`) evaluation**, and **`xlaya_fit` persistent `TTTHead` + split-conformal policies** (**`90.0%`** held-out team accuracy after a `7.58 s` 40-row fit).
 - **Which `/xlaya` Execution Tier Should You Choose?**
   - **Stage 0 — Pure-Python Structural & Lexical Sieve (`0.15 ms/chunk`, `6,841 chunks/s`)**: Best for **zero-dependency CI environments**, `--lexical-prefilter` candidate pruning across `1,000+` chunks, and exact 4-backtick fence-safe `#L<start>-L<end>` breadcrumb chunking across `.md`, `.html`, `.txt`, `.json`, `.jsonl`, and `.csv`.
-  - **Stage 1 — Resident MCP `Laya` (`ModernBERT-large` & `mmBERT`, `~30 ms` warm / `859 q/s`)**: **Default daily driver** for `shortlist`, `contradiction` (Joint NLI Triad), `rubric` (`0..4` completeness), `classify` (including `predict_tournament` on `>20` labels), and bilingual Thai/CJK/multilingual triage.
-  - **Stage 2 — `vega-U` (`0.8B` / `4B` / `gemma-1b`) Conformal Verifier (up to `73,728` tokens & `90.0%` 40-row fitted accuracy)**: Opt-in `--vega` / `vega: true` escalation for **borderline top-K finalists**, **whole-file long-document audits (`--whole-file`)**, and calibrated `prediction_set` + `abstain` + `route` (`"auto"` vs `"review"`) gating.
+  - **Stage 1 — Resident MCP `Laya` (`en`, `typed`, `ensemble`, `multi`, `~30 ms` warm / `859 q/s`)**: **Default daily driver** for `shortlist`, `contradiction` (Joint NLI Triad), `rubric` (`0..4` or `--thorough` 4-facet `specificity`/`completeness`/`consistency`/`actionability` + `file_summaries`), `classify` (including `predict_tournament` on `>20` labels), and bilingual Thai/CJK/multilingual triage.
+  - **Stage 2 — `vega-U` (`auto` / `0.8B` / `4B` / `gemma-1b` / `27B`) Conformal Verifier & Multimodal Engine (up to `73,728` tokens & `90.0%` fitted accuracy)**: Opt-in `--vega` / `vega: true` escalation with **`views=1|2|3` multi-view debiasing**, **persistent `policy_path` (`TTTHead` + split-conformal + OOD `outbound` guard)**, **whole-file long-document audits (`--whole-file`)**, and **local `image`/`audio`/`video` decisions**.
 
 > **One-Prompt Universal Agent Install** — Copy and paste into **any AI coding agent — cloud, IDE, CLI, or local LLM** (`Claude`, `Grok`, `Gemini`, `Cursor`, `Codex`, `Ollama`, `OpenHands`, `Cline`, etc.):
 > ```text
@@ -32,7 +32,7 @@
 
 | Evaluation Dimension | Configuration / Engine | Visual Comparison Bar | Measured Result & Delta vs. Baseline |
 | :--- | :--- | :--- | :--- |
-| **1. Cold CLI Boot Speed ↑**<br>*(32-Chunk Contradiction Sweep)* | **`xlaya v2.0.0` (`predict_batch` + Local Snap)**<br>`xlaya v1.0` Sequential CLI Baseline | `████████████████████` **`7.92× Faster`**<br>`███░░░░░░░░░░░░░░░░░` `1.0× Baseline` | **`9.41 s` (`8,459.7 ms` engine)** ✨<br>`74.51 s` (`-87.4%` cold wall time) |
+| **1. Cold CLI Boot Speed ↑**<br>*(32-Chunk Contradiction Sweep)* | **`xlaya v2.1.0` (`predict_batch` + Local Snap)**<br>`xlaya v1.0` Sequential CLI Baseline | `████████████████████` **`7.92× Faster`**<br>`███░░░░░░░░░░░░░░░░░` `1.0× Baseline` | **`9.41 s` (`8,459.7 ms` engine)** ✨<br>`74.51 s` (`-87.4%` cold wall time) |
 | **2. Mixed-Language Batch Speed ↑**<br>*(50% EN / 50% HI, `32` States × `3` Qs)* | **`Router.predict_batch` (`sort_by_length`)**<br>Sequential `predict()` Loop | `████████████████████` **`8.9× Faster`**<br>`██░░░░░░░░░░░░░░░░░░` `1.0× Loop` | **`114.6 ms` (`837.9 q/s`, `0` flips)** ✨<br>`1,016.2 ms` (`279.3 states/s` batched) |
 | **3. Peak Encoder Throughput ↑**<br>*(`8` States × `4` Questions/State)* | **`mmBERT` Multilingual Batched**<br>`ModernBERT-large` English Batched<br>Sequential `mmBERT` Loop | `████████████████████` **`859.1 q/s (5.9×)`**<br>`████████░░░░░░░░░░░░` `329.8 q/s (2.7×)`<br>`███░░░░░░░░░░░░░░░░░` `146.5 q/s (1.0×)` | **`1.16 ms/q` (`37.2 ms` vs `218.5 ms`)** ✨<br>`3.03 ms/q` (`97.0 ms` vs `263.8 ms`)<br>Unbatched (`6.5×` speedup at `B = 16`) |
 | **4. Few-Shot Conformal Accuracy ↑**<br>*(`routing_labels.csv` Held-Out `N=20`)* | **`vega-U 0.8B` Fitted (`40` rows, `7.58 s`)**<br>`laya` English Zero-Shot<br>`laya-typed-decisions` Zero-Shot<br>Cold `vega-U 0.8B` Zero-Shot | `██████████████████░░` **`90.0% (18/20)`**<br>`████████████████░░░░` `80.0% (16/20)`<br>`███████████████░░░░░` `75.0% (15/20)`<br>`████████████░░░░░░░░` `60.0% (12/20)` | **`+30.0 pts` over cold (`ECE 0.214`)** ✨<br>`31.73 ms` median zero-shot<br>`25.75 ms` median (`ECE 0.188`)<br>`64.36 ms` (`auto: 8`, `review: 12`) |
@@ -41,21 +41,21 @@
 
 ---
 
-## 1. Architecture & 3-Stage System 1 → System 1.5 Ecosystem (`v2.0.0`)
+## 1. Architecture & 3-Stage System 1 → System 1.5 Ecosystem (`v2.1.0`)
 
-### A. 3-Stage Cascade (`Stage 0 Sieve → Stage 1 Laya Encoder → Stage 2 Vega-U Conformal Verifier`)
+### A. 3-Stage Cascade (`Stage 0 Sieve → Stage 1 Laya Ensemble → Stage 2 Vega-U Conformal Verifier`)
 
 ```mermaid
 %%{init: {'theme': 'neutral'}}%%
 flowchart LR
     subgraph Canvas [" "]
-        In["Input Corpus (.md .html .txt .json .jsonl .csv)"] --> S0["Stage 0: Fence-Safe Sieve + BM25 and Thai 3-Gram"]
+        In["Input Corpus or Media (.md .html .txt .json .jsonl .csv .png .wav .mp4)"] --> S0["Stage 0: Fence-Safe Sieve + BM25 and Thai 3-Gram"]
 
         subgraph Stage1 ["Stage 1: Laya v0.4.31 System 1 (output_tokens: 0)"]
             Guard{"Head-Language Guard"}
-            EN["ModernBERT-large (EN 512 tok)"]
+            EN["ModernBERT-large (en / typed / ensemble, 512 tok)"]
             ML["mmBERT Multilingual (up to 8192 tok)"]
-            Triad["Joint NLI Triad + Tournament (>20 Labels)"]
+            Triad["Joint NLI Triad + 4-Facet Rubric + Disagreement Gate (>= 0.15)"]
         end
 
         S0 --> Guard
@@ -64,16 +64,16 @@ flowchart LR
         EN --> Triad
         ML --> Triad
 
-        Triad -->|"Borderline or Top-K (vega: true)"| S2["Stage 2: vega-U System 1.5 (up to 73728 tok)"]
-        Triad -->|"Calibrated Spans (auto)"| Out["Exact file#Lstart-Lend + Conformal Route"]
-        S2 -->|"prediction_set + abstain + route"| Out
+        Triad -->|"Borderline, Disagreement >= 0.15, or Thorough"| S2["Stage 2: vega-U (auto / 0.8b / 4b / 27b) + Views 1..3 + Policy TTTHead"]
+        Triad -->|"Calibrated Spans + file_summaries"| Out["Exact file#Lstart-Lend + Conformal Route"]
+        S2 -->|"prediction_set + abstain + outbound + route"| Out
     end
     classDef default fill:#ffffff,stroke:#475569,color:#0f172a,stroke-width:1px
     style Canvas fill:#ffffff,stroke:#cbd5e1,stroke-width:1.5px,color:#0f172a
     style Stage1 fill:#f8fafc,stroke:#94a3b8,color:#0f172a
 ```
 
-### B. Dual Execution Path (`Resident MCP Server` vs. `Standalone CLI` + Chained `/x*` Skills)
+### B. Dual Execution Path (`Resident MCP Server` vs. `Standalone CLI` + Persistent `xlaya_fit` Policy)
 
 ```mermaid
 %%{init: {'theme': 'neutral'}}%%
@@ -84,10 +84,10 @@ flowchart LR
             Direct["Standalone Agent (/xlaya) or CI Pipeline"]
         end
 
-        subgraph Paths ["2. Dual Execution Engine"]
-            MCP["Tier 1: xlaya_mcp_server.py (~30 ms Warm + Idle Unload)"]
-            CLI["Tier 2: laya_triage.py (7.92x Faster Batch CLI)"]
-            Fit["Automated Conformal Fit Daemon (coming soon)"]
+        subgraph Paths ["2. Dual Execution Engine + Policy Fit"]
+            MCP["Tier 1: xlaya_mcp_server.py (6 Tools, ~30 ms Warm + Idle Unload)"]
+            CLI["Tier 2: laya_triage.py (7.92x Faster Batch CLI + --thorough)"]
+            Fit["Tier 3: xlaya_fit / --fit-rows Persistent TTTHead + Conformal Policy"]
         end
 
         subgraph Actions ["3. System 2 Surgical Action"]
@@ -98,7 +98,9 @@ flowchart LR
         Chain --> MCP
         Direct --> MCP
         Direct --> CLI
-        Direct -.-> Fit
+        Direct --> Fit
+        Fit --> MCP
+        Fit --> CLI
         MCP --> Skip
         MCP --> Edit
         CLI --> Edit
@@ -108,23 +110,22 @@ flowchart LR
     style Hosts fill:#f8fafc,stroke:#94a3b8,color:#0f172a
     style Paths fill:#f8fafc,stroke:#94a3b8,color:#0f172a
     style Actions fill:#f8fafc,stroke:#94a3b8,color:#0f172a
-    style Fit fill:#ffffff,stroke:#94a3b8,stroke-dasharray: 5 5,color:#64748b
 ```
 
-### Six Core Engineering Innovations in `v2.0.0`
+### Core Engineering Innovations in `v2.1.0`
 
-1. **4-Backtick Fence-Safe Multi-Format Chunker (`Stage 0`)**:
-   - Tracks 6-level CommonMark heading breadcrumbs (`H1 > H2 > ... > H6`) and outer 4-backtick/tilde fences (` ```` `) so nested 3-backtick code examples and Python `#` comments inside code blocks never fracture sections. Natively chunks `.md`, `.html`, `.txt`, `.json`, `.jsonl`, and `.csv` with disambiguated relative `#L<start>-L<end>` spans and script-aware token budgets (`≤ 380` English / `≤ 780` Multilingual tokens) so `ModernBERT`'s `512`-token window never silently clips tail claims.
-2. **Head-Language Guard & Per-Chunk Bilingual Routing**:
-   - Routes English chunks to `ModernBERT-large` (`subfolder=None`) and multilingual chunks to `mmBERT` (`subfolder="multilingual"`), protected by the **Head-Language Guard**: whenever shared `query`, `ssot`, `labels`, or `questions` criteria contain non-English characters (Thai, CJK, Devanagari, Cyrillic, Arabic), **100%** of chunks route to `multilingual` so English passages never cross-attend against out-of-vocabulary non-English head tokens.
-3. **3-Question Joint NLI Contradiction Triad (`P_eff`)**:
-   - Single-question contradiction prompts hallucinate conflicts on unrelated topics or verbatim SSOT restatements. `/xlaya` evaluates `P_eff = P(is_relevant) × P(contradicts_ssot) × (1 − P(is_consistent))` in a single batched pass, achieving **`8 / 8 (100%)`** counter-anchor accuracy with **`0` false positives** on verbatim, consistent, and off-topic passages.
-4. **Offline-First Snapshot Loader & Length-Sorted Dynamic Batching (`7.92×`–`8.9×` Speedup)**:
-   - `_resolve_local_laya_snapshot()` resolves local HuggingFace cache snapshots directly without blocking network round-trips, while `predict_batch(..., sort_by_length=True)` eliminates sequence-padding waste across heterogeneous chunks (`0 / 432` batch-vs-single label flips).
-5. **Calibrated Tournament Elimination for `>20` Choice Labels**:
-   - Automatically switches to `laya.predict_tournament(..., group_size=16)` whenever a `choice` taxonomy exceeds `20` labels, preserving full cross-attention precision across multi-round brackets without embedding-collapse degradation.
-6. **Zero-Extra-Dependency Resident MCP Server + Conformal `vega-U` Stage 2**:
-   - `xlaya_mcp_server.py` enforces strict JSON-RPC 2.0 `stdio` wire purity (`sys.stdout` redirected to `sys.stderr`), keeps `en`, `multi`, and `vega-U` (`0.8b` / `4b` / `gemma-1b`, up to `73,728` tokens) warm at **`~30 ms`**, strips raw `unbound` / `action` fields to enforce conformal `prediction_set` + `abstain` + `route` gating, and auto-reclaims idle GPU VRAM after `LAYA_IDLE_TTL_SEC` (`1800 s`).
+1. **Stage 1 `typed` (`subfolder="typed-decisions"`) & Calibrated `ensemble` + Inter-Model Disagreement Gate**:
+   - Exposes `lang="typed"` (`ECE = 0.188`) and `lang="ensemble"` (`0.45 × P_en + 0.55 × P_typed`), achieving **`0.00%` false-confident fires** (`80.0%` accuracy) on the XERJ `#1108` Watcher Gate while computing inter-model `disagreement = max_k |P_en(k) − P_typed(k)|` and automatically flagging uncertain chunks (`disagreement ≥ 0.15`) for Stage 2 escalation.
+2. **Stage 2 Hardware-Aware `vega_model` Auto-Tiering (`auto` / `0.8b` / `4b` / `gemma-1b` / `27b`) + `views=1|2|3` Multi-View Debiasing**:
+   - `vega_model="auto"` selects the largest local `vega-U` checkpoint that fits comfortably in free GPU VRAM (`4b` on `≥ 10 GB` free VRAM, `0.8b` otherwise, up to `27b` for high-VRAM hosts and `73,728` tokens). Multi-view debiasing (`views=2` option-order reversal; `views=3` reversal + prose template paraphrase) cancels positional and phrasing bias, returning `view_agreement` and forcing `route = "review"` on view disagreement.
+3. **`--thorough` Full-Document Scan & 4-Facet Decomposed Rubric Scoring (`file_summaries`)**:
+   - Evaluates chunks across 4 orthogonal rubric facets (`specificity`, `completeness`, `consistency`, `actionability`) with domain presets (`--rubric-preset default|architecture|code_audit|doc_sync|research`), emits file-level sliding-window `file_summaries` (`mean_score`, `min_score`, `weakest_section`, `contradiction_hotspots`, `facet_breakdown`), runs Stage 1 `ensemble` + `disagreement ≥ 0.15` gating, and auto-escalates top/uncertain candidates to Stage 2 (`views=3`).
+4. **`xlaya_fit` / `--fit-rows` Persistent `TTTHead` + Split-Conformal Policy Calibration (`policy_path` & `outbound` OOD Guard)**:
+   - Fits ridge-regression `TTTHead` weights (`heads.npz`), out-of-fold split-conformal thresholds (`calibration.json`), OOD feature centroids (`outbound` guard), and question schemas (`questions.json`) in `< 8 s` (`60.0%` → `90.0%` held-out accuracy on `routing_labels.csv`), reloadable across CLI and MCP invocations via `policy_path`.
+5. **Local Multimodal Decision Support (`image`, `audio`, `video`) in `xlaya_predict`**:
+   - Evaluates local images via `VegaVision`, audio via local ASR + decision heads, and video via speech/contact-sheet inspection without requiring text `state`/`states`.
+6. **4-Backtick Fence-Safe Chunker, Head-Language Guard, 3-Question Joint NLI Triad (`P_eff`) & Tournament Elimination (`>20` Labels)**:
+   - Preserves 6-level CommonMark breadcrumbs across `.md`, `.html`, `.txt`, `.json`, `.jsonl`, and `.csv`; enforces the **Head-Language Guard** so non-English queries/heads route `100%` to `mmBERT`; evaluates `P_eff = P(is_relevant) × P(contradicts_ssot) × (1 − P(is_consistent))` (`8 / 8 = 100%` counter-anchor accuracy); and auto-runs `laya.predict_tournament(..., group_size=16)` on `>20` choice labels.
 
 ---
 
@@ -149,7 +150,7 @@ Full methodology and extended telemetry are documented in [`benchmarks/XLAYA_V2_
 ```latex
 \begin{table}[t]
 \centering
-\caption{Empirical latency and batched throughput of \textsc{XLaya v2.0.0} (\texttt{laya 0.4.31}, \texttt{vegaml 0.16.1}) on an NVIDIA GeForce RTX 5060 Ti (16\,GB VRAM, \texttt{PyTorch 2.13.0+cu130}). All forward passes emit zero autoregressive tokens (\texttt{output\_tokens = 0}).}
+\caption{Empirical latency and batched throughput of \textsc{XLaya v2.1.0} (\texttt{laya 0.4.31}, \texttt{vegaml 0.16.1}) on an NVIDIA GeForce RTX 5060 Ti (16\,GB VRAM, \texttt{PyTorch 2.13.0+cu130}). All forward passes emit zero autoregressive tokens (\texttt{output\_tokens = 0}).}
 \label{tab:xlaya_axis1_throughput}
 \begin{tabular}{llrrrr}
 \toprule
@@ -185,7 +186,7 @@ Stage 0 Pure-Python Sieve & 27 specs (1,165 chunks) & \textbf{170.29} & --- & 15
 
 ### Axis 3: Conformal Calibration, Joint NLI Contradiction Triad & XERJ `#1108` Watcher Gate
 
-| Benchmark Suite & Evaluation Target | Baseline / Cold Reference | `/xlaya v2.0.0` Calibrated Result | Empirical Gain & Safety Receipt |
+| Benchmark Suite & Evaluation Target | Baseline / Cold Reference | `/xlaya v2.1.0` Calibrated Result | Empirical Gain & Safety Receipt |
 | :--- | :--- | :--- | :--- |
 | **1. `routing_labels.csv` (`40` Fit / `20` Test)**<br>*(Conformal Few-Shot Calibration)* | Cold `vega-U 0.8B`: `60.0%` acc (`auto: 8, review: 12`)<br>`laya-typed-decisions`: `75.0%` (`25.75 ms`, `ECE 0.188`)<br>`laya` `english`: `80.0%` (`31.73 ms`, `ECE 0.283`) | **`vega-U 0.8B` Fitted (`40` rows in `7.58 s`)**:<br>**`90.0%` (`18/20`) team acc**, `ECE = 0.214`, `urgency_mae = 0.650` (`103.36 ms`) | **`+30.0 pts` over cold `vega-U`** & **`+10.0 pts` over zero-shot `laya`** in `< 8 s` fit time ✨ |
 | **2. 3-Question Joint NLI Triad (`P_eff`)**<br>*(Counter-Anchor Contradiction Suite)* | 1-question `noul` suffers off-topic & verbatim-agreement false positives | **`8 / 8 (100.0%)` accuracy**, **`0` false positives**<br>`direct=0.6735`, `numeric=0.6806`, `ood_pgbouncer=0.7553` vs `0.0456` consistent, `73k_vega=0.6569` vs `0.0412` | **`16.6×` OOD conflict-vs-consistent separation** + `73,728`-token whole-file support ✨ |
@@ -219,15 +220,15 @@ XERJ \texttt{\#1108} & \textbf{\textsc{XLaya} Standalone / Ensemble (PASS)} & \t
 
 ---
 
-## 3. Resident MCP Server (`5` Tools) & Standalone CLI Usage
+## 3. Resident MCP Server (`6` Tools) & Standalone CLI Usage
 
 ### A. Optional Neural Dependencies (`Stage 0` Runs on Python 3.9+ Stdlib Alone)
 ```bash
-# Stage 1 (Laya ModernBERT-large + mmBERT) & Stage 2 (VegaML conformal vega-U):
+# Stage 1 (Laya ModernBERT-large en/typed/ensemble + mmBERT) & Stage 2 (VegaML conformal vega-U / VegaVision):
 pip install "laya>=0.4.31" "vegaml>=0.16.1" torch
 ```
 
-### B. Register the Resident MCP Server (`xlaya_mcp_server.py` — `~30 ms` Warm)
+### B. Register the Resident MCP Server (`xlaya_mcp_server.py` — `6` Tools, `~30 ms` Warm)
 Add `xlaya` to your MCP client configuration (`mcp_config.json`, Claude Desktop, Cursor, Antigravity, Windsurf, or Cline):
 ```json
 {
@@ -245,25 +246,31 @@ Add `xlaya` to your MCP client configuration (`mcp_config.json`, Claude Desktop,
 
 | Resident MCP Tool | Core Parameters | Primary Use Case |
 | :--- | :--- | :--- |
-| **`xlaya_triage`** | `paths`, `mode` (`shortlist\|contradiction\|rubric\|classify`), `query`, `ssot`, `vega`, `lexical_prefilter` | End-to-end Stage 0 → Stage 1 → Stage 2 directory/file sweep returning `#L<start>-L<end>` spans |
-| **`xlaya_predict`** | `questions`, `state` or `states`, `model` (`auto\|en\|multi`), `vega`, `vega_model` (`0.8b\|4b\|gemma-1b`) | In-memory `choice`, `score`, and `noul` evaluation (auto-runs Head-Language Guard & `predict_tournament`) |
-| **`xlaya_status`** | *(none)* | Inspects warm-loaded models (`en`, `multi`, `vegaml`), active GPU/MPS/CPU device, and `LAYA_IDLE_TTL_SEC` |
-| **`xlaya_preload`** | `models=["en", "multi"]`, `vega=false`, `vega_model="0.8b"`, `device="auto"` | Pre-warms checkpoints in RAM/VRAM ahead of latency-critical sweeps |
+| **`xlaya_triage`** | `paths`, `mode` (`shortlist\|contradiction\|rubric\|classify`), `query`, `ssot`, `lang` (`auto\|en\|multi\|typed\|ensemble`), `thorough`, `rubric_preset` (`default\|architecture\|code_audit\|doc_sync\|research`), `views` (`1\|2\|3`), `policy_path`, `vega`, `vega_model` (`auto\|0.8b\|4b\|gemma-1b\|27b`), `lexical_prefilter` | End-to-end Stage 0 → Stage 1 → Stage 2 directory/file sweep returning `#L<start>-L<end>` spans, 4-facet scores, `disagreement` gate, and `file_summaries` |
+| **`xlaya_predict`** | `questions`, `state` or `states`, `model` (`auto\|en\|multi\|typed\|ensemble`), `vega`, `vega_model` (`auto\|0.8b\|4b\|gemma-1b\|27b`), `views` (`1\|2\|3`), `policy_path`, `image`, `audio`, `video` | In-memory or local multimodal (`image`/`audio`/`video`) `choice`, `score`, and `noul` evaluation (auto-runs Head-Language Guard, `views` debiasing & `predict_tournament`) |
+| **`xlaya_fit`** | `rows` (`list[dict]` or `.csv`/`.jsonl` path), `questions`, `policy_path`, `vega_model="0.8b"`, `device="auto"`, `folds=5`, `calibrate=true`, `target_precision=0.95` | Fits and persists a `VegaAgent` `TTTHead` + split-conformal policy (`heads.npz`, `calibration.json`, `manifest.json`, `questions.json`) with OOD `outbound` centroid guard |
+| **`xlaya_status`** | *(none)* | Inspects warm-loaded models (`en`, `multi`, `typed`, `ensemble`, `vegaml`), active GPU/MPS/CPU device, MCP version (`2.1.0`), and `LAYA_IDLE_TTL_SEC` |
+| **`xlaya_preload`** | `models=["en", "multi", "typed", "ensemble"]`, `vega=false`, `vega_model="auto"`, `device="auto"` | Pre-warms checkpoints in RAM/VRAM ahead of latency-critical sweeps |
 | **`xlaya_unload`** | *(none)* | Immediately evicts cached models and reclaims CPU RAM and CUDA VRAM |
 
 ### C. Run as a Standalone Python CLI (`laya_triage.py`)
 ```bash
-# 1. Hybrid Section Shortlisting (#L<start>-L<end>) with Stage 0 lexical prefilter:
-python laya_triage.py ./docs --mode shortlist --query "conformal prediction routing" --top-k 8 --lexical-prefilter 64
+# 1. Thorough 4-Facet Decomposed Rubric Scan (ensemble + disagreement >= 0.15 + file_summaries + views=3):
+python laya_triage.py ./docs --mode rubric --thorough --rubric-preset architecture --top-k 10
 
-# 2. 3-Question Joint NLI Contradiction Sweep across Markdown, HTML, JSON, JSONL, and CSV:
-python laya_triage.py . --mode contradiction --ssot "ModernBERT-large uses a 512-token context window and outputs 0 LLM tokens." --threshold 0.60
+# 2. 3-Question Joint NLI Contradiction Sweep with Calibrated Stage 1 Ensemble (0.45*en + 0.55*typed):
+python laya_triage.py . --mode contradiction --ssot "ModernBERT-large uses a 512-token context window and outputs 0 LLM tokens." --lang ensemble --threshold 0.60
 
-# 3. Completeness Rubric (0..4) + Stage 2 vega-U (0.8b) Conformal Escalation on Top-10 Finalists:
-python laya_triage.py ./skills --mode rubric --ssot "Production specification with CLI and MCP schemas" --vega --vega-model 0.8b --vega-top-k 10
+# 3. Multi-View Debiased Stage 2 vega-U Conformal Escalation (views=3 cancels position & phrasing bias):
+python laya_triage.py ./skills --mode rubric --ssot "Production specification with CLI and MCP schemas" --vega --vega-model auto --views 3 --vega-top-k 10
 
-# 4. Whole-File Long-Document Conformal Check (up to 73,728 tokens) & Reproducible Self-Tests:
-python laya_triage.py README.md --mode contradiction --ssot "XLaya v2.0.0 runs with zero output tokens." --whole-file --vega
+# 4. Fit a Persistent TTTHead + Split-Conformal Policy & Evaluate with OOD Outbound Guard:
+python laya_triage.py --fit-rows routing_labels.csv --questions-file questions.json --policy-path ./policies/routing_v1
+python laya_triage.py ./docs --mode classify --policy-path ./policies/routing_v1
+
+# 5. Local Multimodal Evaluation (image / audio / video), Whole-File 73k Audit & Self-Tests:
+python laya_triage.py --image architecture.png --questions-file vision_q.json --vega-model 4b
+python laya_triage.py README.md --mode contradiction --ssot "XLaya v2.1.0 runs with zero output tokens." --whole-file --vega
 python laya_triage.py --self-test
 python benchmarks/run_xlaya_benchmark.py --mode quick
 ```

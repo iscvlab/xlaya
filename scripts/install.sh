@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# XLaya (v2.0.0) - Universal Installer (macOS & Linux) - iscvlab/xlaya
+# XLaya (v2.1.0) - Universal Installer (macOS & Linux) - iscvlab/xlaya
 # Installs skills/xlaya into ~/.gemini/config/skills, ~/.claude/skills, ~/.grok/skills,
 # ~/.codex/skills, ~/.agents/skills, or --target <dir>.
 
@@ -14,7 +14,7 @@ LEGACY_DIRS=(
 )
 
 echo "============================================================"
-echo "  ⚡ XLaya (v2.0.0) - iscvlab/xlaya Universal Installer"
+echo "  ⚡ XLaya (v2.1.0) - iscvlab/xlaya Universal Installer"
 echo "============================================================"
 echo "Source: $SKILLS_SRC"
 
@@ -133,5 +133,5 @@ fi
 
 echo ""
 echo "============================================================"
-echo "  ✓ XLaya (v2.0.0) Installation Complete! /xlaya skill ready."
+echo "  ✓ XLaya (v2.1.0) Installation Complete! /xlaya skill ready."
 echo "============================================================"

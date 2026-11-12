@@ -1,8 +1,8 @@
-# Empirical 4-Axis Benchmark Report: `iscvlab/xlaya` (`v2.0.0`) × `Laya v0.4.31` × `VegaML v0.16.1`
+# Empirical 4-Axis Benchmark Report: `iscvlab/xlaya` (`v2.1.0`) × `Laya v0.4.31` × `VegaML v0.16.1`
 
 > [!IMPORTANT]
 > **Executive Summary**
-> This technical report documents primary-source GPU and CPU benchmarks for **`iscvlab/xlaya` (`v2.0.0`)**, a non-autoregressive **3-Stage System 1 → System 1.5 Semantic Decision, Joint NLI Contradiction Triad & Conformal Triage Sidecar**. Evaluated on an **NVIDIA GeForce RTX 5060 Ti (`16 GB VRAM`, `PyTorch 2.13.0+cu130`, `laya 0.4.31`, `vegaml 0.16.1`)**, `xlaya v2.0.0` cuts cold 32-chunk CLI sweeps by **`7.92×` (`74.51 s` → `9.41 s`)**, reaches **`29.99 ms` warm single-state inference** via its resident MCP server (`xlaya_mcp_server.py`), accelerates mixed-language `Router.predict_batch` throughput by **`8.9×` (`837.9 q/s`)** and `mmBERT` batch throughput to **`859.1 q/s` (`1.16 ms/question`)** with **`0 / 432` batch-vs-single label flips**, boosts `vega-U (0.8b)` routing accuracy from **`60.0%` cold to `90.0%` (`18/20`)** after a **`7.58 s` 40-row conformal fit**, achieves **`8 / 8 (100.0%)`** counter-anchor precision on its 3-Question Joint NLI Contradiction Triad, and eliminates wrong-and-confident (`p ≥ 0.80`) fires on **[`xerj-org/xerj#1108`](https://github.com/xerj-org/xerj/issues/1108)** from **`24.49%` (`24/98` FAIL) down to `0.00%` (`0/30` standalone, `0/36` calibrated ensemble PASS)**.
+> This technical report documents primary-source GPU and CPU benchmarks for **`iscvlab/xlaya` (`v2.1.0`)**, a non-autoregressive **3-Stage System 1 → System 1.5 Semantic Decision, Dual-Encoder Ensemble Jury, Joint NLI Contradiction Triad & Conformal Triage Sidecar**. Evaluated on an **NVIDIA GeForce RTX 5060 Ti (`16 GB VRAM`, `PyTorch 2.13.0+cu130`, `laya 0.4.31`, `vegaml 0.16.1`)**, `xlaya v2.1.0` cuts cold 32-chunk CLI sweeps by **`7.92×` (`74.51 s` → `9.41 s`)**, reaches **`29.99 ms` warm single-state inference** via its 6-tool resident MCP server (`xlaya_mcp_server.py`), accelerates mixed-language `Router.predict_batch` throughput by **`8.9×` (`837.9 q/s`)** and `mmBERT` batch throughput to **`859.1 q/s` (`1.16 ms/question`)** with **`0 / 432` batch-vs-single label flips**, boosts `vega-U (0.8b)` routing accuracy from **`60.0%` cold to `90.0%` (`18/20`)** after a **`7.58 s` 40-row conformal fit** (`xlaya_fit` persistent `TTTHead` + split-conformal policy), achieves **`8 / 8 (100.0%)`** counter-anchor precision on its 3-Question Joint NLI Contradiction Triad, adds `--thorough` 4-facet decomposed rubric scoring + `file_summaries` and `--vega-views 1..3` multi-view debiasing, and eliminates wrong-and-confident (`p ≥ 0.80`) fires on **[`xerj-org/xerj#1108`](https://github.com/xerj-org/xerj/issues/1108)** from **`24.49%` (`24/98` FAIL) down to `0.00%` (`0/30` standalone, `0/36` calibrated ensemble PASS)**.
 
 ---
 
@@ -17,7 +17,7 @@
 
 | Evaluation Dimension | Configuration / Engine | Visual Comparison Bar | Measured Result & Delta vs. Baseline |
 | :--- | :--- | :--- | :--- |
-| **1. Cold CLI Boot Speed ↑**<br>*(32-Chunk Contradiction Sweep)* | **`xlaya v2.0.0` (`predict_batch` + Local Snap)**<br>`xlaya v1.0` Sequential Baseline | `████████████████████` **`7.92× Faster`**<br>`███░░░░░░░░░░░░░░░░░` `1.0× Baseline` | **`9.41 s` wall (`8,459.7 ms` engine)** ✨<br>`74.51 s` wall (`-87.4%` latency cut) |
+| **1. Cold CLI Boot Speed ↑**<br>*(32-Chunk Contradiction Sweep)* | **`xlaya v2.1.0` (`predict_batch` + Local Snap)**<br>`xlaya v1.0` Sequential Baseline | `████████████████████` **`7.92× Faster`**<br>`███░░░░░░░░░░░░░░░░░` `1.0× Baseline` | **`9.41 s` wall (`8,459.7 ms` engine)** ✨<br>`74.51 s` wall (`-87.4%` latency cut) |
 | **2. Mixed-Lang Batch Speed ↑**<br>*(50% EN / 50% HI, `32` States × `3` Qs)* | **`Router.predict_batch` (`sort_by_length`)**<br>Sequential `predict()` Loop | `████████████████████` **`8.9× Faster`**<br>`██░░░░░░░░░░░░░░░░░░` `1.0× Loop` | **`114.6 ms` (`837.9 q/s`, `0` flips)** ✨<br>`1,016.2 ms` (`279.3 states/s` batched) |
 | **3. Peak Encoder Throughput ↑**<br>*(`8` States × `4` Questions/State)* | **`mmBERT` Multilingual Batched**<br>`ModernBERT-large` English Batched<br>Sequential `mmBERT` Loop | `████████████████████` **`859.1 q/s (5.9×)`**<br>`████████░░░░░░░░░░░░` `329.8 q/s (2.7×)`<br>`███░░░░░░░░░░░░░░░░░` `146.5 q/s (1.0×)` | **`1.16 ms/question` (`37.2 ms` batch)** ✨<br>`3.03 ms/question` (`97.0 ms` vs `263.8 ms`)<br>`218.5 ms` (`6.5×` speedup at `B = 16`) |
 | **4. Conformal Fit Accuracy ↑**<br>*(`routing_labels.csv` Held-Out `N = 20`)* | **`vega-U 0.8B` Fitted (`40` rows, `7.58 s`)**<br>`laya` English Zero-Shot<br>`laya-typed-decisions` Zero-Shot<br>`vega-U 0.8B` Cold Zero-Shot | `██████████████████░░` **`90.0% (18/20)`**<br>`████████████████░░░░` `80.0% (16/20)`<br>`███████████████░░░░░` `75.0% (15/20)`<br>`████████████░░░░░░░░` `60.0% (12/20)` | **`ECE = 0.214` (`103.36 ms` median)** ✨<br>`31.73 ms` median (`ECE = 0.283`)<br>`25.75 ms` median (`ECE = 0.188`)<br>`64.36 ms` (`auto: 8`, `review: 12`) |
@@ -33,7 +33,7 @@
 | Execution Path | Workload Profile | Measured Latency ↓ | Throughput / Per-Unit Speed ↑ | Key Engineering Mechanism |
 | :--- | :--- | :---: | :---: | :--- |
 | **1. `xlaya v1.0` Cold CLI Baseline** | `32` Markdown chunks (sequential) | `74,510.0 ms` (`74.51 s`) | `0.43 chunks/s` | Remote HF Hub metadata checks + 1-by-1 `predict()` loop |
-| **2. `xlaya v2.0.0` Cold CLI (`laya_triage.py`)** | `32` Markdown chunks (`batch_size=32`) | **`9,410.0 ms` (`9.41 s`)** | **`3.40 chunks/s` (`7.92×` faster)** | Offline-first `_resolve_local_laya_snapshot()` + `sort_by_length=True` |
+| **2. `xlaya v2.1.0` Cold CLI (`laya_triage.py`)** | `32` Markdown chunks (`batch_size=32`) | **`9,410.0 ms` (`9.41 s`)** | **`3.40 chunks/s` (`7.92×` faster)** | Offline-first `_resolve_local_laya_snapshot()` + `sort_by_length=True` |
 | **3. Warm Resident MCP (`xlaya_predict`)** | `1` state in-memory decision | **`29.99 ms`** | **`33.3 states/s`** | Persistent `_MODEL_CACHE` + `stdio` JSON-RPC 2.0 wire purity |
 | **4. Warm Resident MCP (`xlaya_triage`)** | `32` chunks × `3`-Q Joint NLI Triad (`96` Qs) | **`662.49 ms`** | **`144.9 q/s` (`6.90 ms/q`)** | Batched `ModernBERT-large` cross-attention (`112.5×` faster than v1 cold) |
 | **5. Warm Resident MCP (`vega: true`)** | `1` state conformal `vega-U (0.8b)` | **`176.18 ms`** | **`5.68 states/s`** | Calibrated `prediction_set`, `abstain`, and `route` (`auto` vs `review`) |
@@ -137,6 +137,6 @@ python benchmarks/run_xlaya_benchmark.py --mode quick
 # 2. Full Stage 0 + Batched Stage 1 + Conformal Stage 2 (vega-U 0.8b) Suite:
 python benchmarks/run_xlaya_benchmark.py --mode full
 
-# 3. Built-in 10-Check Deterministic + Counter-Anchor + 24-Label Tournament Self-Test:
+# 3. Built-in 11-Check Deterministic + Counter-Anchor + 24-Label Tournament + v2.1 Self-Test:
 python laya_triage.py --self-test
 ```
