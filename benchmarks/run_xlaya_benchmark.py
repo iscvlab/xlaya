@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reproducible 3-Stage Benchmark & Verification Harness for iscvlab/xlaya (v2.1.0)."""
+"""Reproducible 3-Stage Benchmark & Verification Harness for iscvlab/xlaya (v2.3.0)."""
 
 from __future__ import annotations
 
@@ -291,7 +291,7 @@ def _verify_receipt_json() -> Tuple[str, str, str]:
 
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Reproducible benchmark & verification suite for iscvlab/xlaya (v2.1.0)."
+        description="Reproducible benchmark & verification suite for iscvlab/xlaya (v2.3.0)."
     )
     parser.add_argument(
         "--mode",
@@ -310,7 +310,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     rows.extend(_bench_neural_probes(full_mode=(args.mode == "full")))
     total_ms = (time.perf_counter() - t_start) * 1000.0
 
-    print(f"### XLaya v2.1.0 Verification Summary (`mode={args.mode}`, total `{total_ms:.1f} ms`)\n")
+    print(f"### XLaya v2.3.0 Verification Summary (`mode={args.mode}`, total `{total_ms:.1f} ms`)\n")
     print("| Benchmark Check | Latency | Verified Result |")
     print("| :--- | :---: | :--- |")
     for check_name, latency_str, detail_str in rows:

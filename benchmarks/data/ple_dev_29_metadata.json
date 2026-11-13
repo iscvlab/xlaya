@@ -1,0 +1,325 @@
+{
+  "license": "Apache-2.0",
+  "source": "google/physical-engineerings-last-exam (public dev_set.yaml metadata)",
+  "tasks_revision": "b3857a3fea39a695e18f845d4a88f29442e96e75",
+  "tasks": [
+    {
+      "id": "data-hall-mep-routing",
+      "title": "Clash-free MEP routing through a data hall",
+      "domain": "Mechanical engineering",
+      "grading": "checks",
+      "deliverables": [
+        "/app/files/dc_model__hall_seed000_d000__mep_routing/output/solution.py"
+      ],
+      "final_message": false
+    },
+    {
+      "id": "fire-test-validation-memo",
+      "title": "Validation memo for a fire-resistance simulation against its test",
+      "domain": "Mechanical engineering",
+      "grading": "rubric",
+      "deliverables": [
+        "/app/files/"
+      ],
+      "final_message": true
+    },
+    {
+      "id": "data-hall-mep-routing-offset",
+      "title": "Clash-free MEP routing through a data hall on an offset structural grid",
+      "domain": "Mechanical engineering",
+      "grading": "checks",
+      "deliverables": [
+        "/app/files/dc_model__hall_seed005_d100__mep_routing/output/solution.py"
+      ],
+      "final_message": false
+    },
+    {
+      "id": "eor-review-corrections",
+      "title": "Issue an engineer-of-record review's corrections to two bid packages",
+      "domain": "Structural engineering",
+      "grading": "checks-judge",
+      "deliverables": [
+        "/filesystem/dc_structural__eor_revision__blind/output/submission.zip",
+        "/filesystem/filesystem/dc_structural__eor_revision__blind/output/submission.zip"
+      ],
+      "final_message": false
+    },
+    {
+      "id": "foundation-strategy",
+      "title": "Spread footings or aggregate piers for six data-campus building pads",
+      "domain": "Civil engineering",
+      "grading": "checks-judge",
+      "deliverables": [
+        "/filesystem/dc_structural__foundation_strategy__blind/output/submission.zip",
+        "/filesystem/filesystem/dc_structural__foundation_strategy__blind/output/submission.zip"
+      ],
+      "final_message": false
+    },
+    {
+      "id": "landscape-sheet-revision",
+      "title": "Street-tree revision worked into a landscape resubmittal",
+      "domain": "Civil engineering",
+      "grading": "rubric",
+      "deliverables": [
+        "/app/files/"
+      ],
+      "final_message": true
+    },
+    {
+      "id": "data-center-site-model",
+      "title": "Feasible data-center site design as an IFC model",
+      "domain": "Civil engineering",
+      "grading": "checks",
+      "deliverables": [
+        "/app/files/frontier__DCBim__p6_002/submission/model.ifc"
+      ],
+      "final_message": false
+    },
+    {
+      "id": "engineers-estimate-check",
+      "title": "Engineer's estimate checked before a bond conversation",
+      "domain": "Civil engineering",
+      "grading": "rubric",
+      "deliverables": [
+        "/filesystem/",
+        "/app/output/",
+        "/app/tools/.apps_data/"
+      ],
+      "final_message": true
+    },
+    {
+      "id": "footing-settlement-verification",
+      "title": "Settlement verification of a building block's spread footings on clay",
+      "domain": "Civil engineering",
+      "grading": "rubric",
+      "deliverables": [
+        "/filesystem/",
+        "/app/output/",
+        "/app/tools/.apps_data/"
+      ],
+      "final_message": true
+    },
+    {
+      "id": "solar-supplemental-review",
+      "title": "Supplemental interconnection review memo for a solar project",
+      "domain": "Electrical engineering",
+      "grading": "rubric",
+      "deliverables": [
+        "/filesystem/",
+        "/app/output/",
+        "/app/tools/.apps_data/"
+      ],
+      "final_message": true
+    },
+    {
+      "id": "solar-witness-test-package",
+      "title": "Witness-test scope and schedule for municipal solar arrays",
+      "domain": "Electrical engineering",
+      "grading": "rubric",
+      "deliverables": [
+        "/filesystem/",
+        "/app/output/",
+        "/app/tools/.apps_data/"
+      ],
+      "final_message": true
+    },
+    {
+      "id": "frame-extension-method",
+      "title": "Method package for a frame extension over an occupied floor",
+      "domain": "Civil engineering",
+      "grading": "checks",
+      "deliverables": [
+        "/filesystem/field_eng__constructability_4d__blind/output/submission.zip",
+        "/filesystem/filesystem/field_eng__constructability_4d__blind/output/submission.zip"
+      ],
+      "final_message": false
+    },
+    {
+      "id": "fire-solve-convergence",
+      "title": "Disposition of a non-converging fire-simulation solve",
+      "domain": "Mechanical engineering",
+      "grading": "rubric",
+      "deliverables": [
+        "/filesystem/",
+        "/app/output/",
+        "/app/tools/.apps_data/"
+      ],
+      "final_message": true
+    },
+    {
+      "id": "les-mesh-resolution",
+      "title": "Mesh-resolution basis for an LES fire case",
+      "domain": "Mechanical engineering",
+      "grading": "rubric",
+      "deliverables": [
+        "/filesystem/",
+        "/app/output/",
+        "/app/tools/.apps_data/"
+      ],
+      "final_message": true
+    },
+    {
+      "id": "mv-conveyance-study",
+      "title": "Conveyance study for a 13.8 kV site distribution",
+      "domain": "Electrical engineering",
+      "grading": "checks",
+      "deliverables": [
+        "/filesystem/final_batch4__electrical_task12_conveyance_study__blind/output/submission.zip"
+      ],
+      "final_message": false
+    },
+    {
+      "id": "data-hall-device-takeoff",
+      "title": "Device takeoff and priced bill of materials for a data hall",
+      "domain": "Electrical engineering",
+      "grading": "checks",
+      "deliverables": [
+        "/filesystem/final_batch4__electrical_task17_ec_0205_d100__blind/output/submission.zip"
+      ],
+      "final_message": false
+    },
+    {
+      "id": "division-26-specifications",
+      "title": "Division 26 project specifications for an Army facility",
+      "domain": "Electrical engineering",
+      "grading": "checks",
+      "deliverables": [
+        "/filesystem/final_batch4__electrical_task8_electrical_specs__blind/output/submission.zip"
+      ],
+      "final_message": false
+    },
+    {
+      "id": "heat-rejection-life-cycle-cost",
+      "title": "Life-cycle cost of a condenser-water heat rejection replacement",
+      "domain": "Mechanical engineering",
+      "grading": "checks",
+      "deliverables": [
+        "/filesystem/final_batch4__mechanical_task3_ct_heat_lcc__blind/output/submission.zip"
+      ],
+      "final_message": false
+    },
+    {
+      "id": "cooling-water-flush-plan",
+      "title": "Flushing and passivation of a data hall's process cooling water",
+      "domain": "Mechanical engineering",
+      "grading": "checks",
+      "deliverables": [
+        "/filesystem/final_batch4__mechanical_task5_pcw_flush_mop__blind/output/submission.zip"
+      ],
+      "final_message": false
+    },
+    {
+      "id": "wind-diaphragm-shear",
+      "title": "Roof diaphragm shears and shear-wall loads for wind",
+      "domain": "Structural engineering",
+      "grading": "checks",
+      "deliverables": [
+        "/filesystem/final_batch4__structural_task5_wind_diaphragm_shear__blind/output/submission.zip"
+      ],
+      "final_message": false
+    },
+    {
+      "id": "seismic-diaphragm-shear",
+      "title": "Seismic diaphragm shears and shear-wall loads",
+      "domain": "Structural engineering",
+      "grading": "checks",
+      "deliverables": [
+        "/filesystem/final_batch4__structural_task6_seismic_diaphragm_shear__blind/output/submission.zip"
+      ],
+      "final_message": false
+    },
+    {
+      "id": "roof-deck-design",
+      "title": "Roof deck design for gravity and lateral loads",
+      "domain": "Structural engineering",
+      "grading": "checks",
+      "deliverables": [
+        "/filesystem/final_batch4__structural_task7_roof_deck_design__blind/output/submission.zip"
+      ],
+      "final_message": false
+    },
+    {
+      "id": "fill-compaction-acceptance",
+      "title": "Acceptance of slab-on-grade fill compaction testing",
+      "domain": "Civil engineering",
+      "grading": "rubric",
+      "deliverables": [
+        "/filesystem/",
+        "/app/output/",
+        "/app/tools/.apps_data/"
+      ],
+      "final_message": true
+    },
+    {
+      "id": "shoring-design-verification",
+      "title": "Verification of a revised shoring design ahead of an excavation",
+      "domain": "Civil engineering",
+      "grading": "rubric",
+      "deliverables": [
+        "/filesystem/",
+        "/app/output/",
+        "/app/tools/.apps_data/"
+      ],
+      "final_message": true
+    },
+    {
+      "id": "emergency-spillway-check",
+      "title": "Emergency spillway check behind a plan-check comment",
+      "domain": "Civil engineering",
+      "grading": "rubric",
+      "deliverables": [
+        "/filesystem/",
+        "/app/output/",
+        "/app/tools/.apps_data/"
+      ],
+      "final_message": true
+    },
+    {
+      "id": "pre-application-capacity-response",
+      "title": "Response to a pre-application request for feeder capacity",
+      "domain": "Electrical engineering",
+      "grading": "rubric",
+      "deliverables": [
+        "/filesystem/",
+        "/app/output/",
+        "/app/tools/.apps_data/"
+      ],
+      "final_message": true
+    },
+    {
+      "id": "permission-to-operate-memo",
+      "title": "Permission-to-operate memo for an office complex's PV system",
+      "domain": "Electrical engineering",
+      "grading": "rubric",
+      "deliverables": [
+        "/filesystem/",
+        "/app/output/",
+        "/app/tools/.apps_data/"
+      ],
+      "final_message": true
+    },
+    {
+      "id": "backfeed-energization-reply",
+      "title": "Reply on a community solar site's backfeed energization date",
+      "domain": "Electrical engineering",
+      "grading": "rubric",
+      "deliverables": [
+        "/filesystem/",
+        "/app/output/",
+        "/app/tools/.apps_data/"
+      ],
+      "final_message": true
+    },
+    {
+      "id": "lv-cable-sizing",
+      "title": "Low-voltage wire schedule with voltage drop and duct-bank ampacity",
+      "domain": "Electrical engineering",
+      "grading": "checks-judge",
+      "deliverables": [
+        "/filesystem/electrical__lv_cable_sizing__blind/output/submission.zip",
+        "/filesystem/filesystem/electrical__lv_cable_sizing__blind/output/submission.zip"
+      ],
+      "final_message": false
+    }
+  ]
+}

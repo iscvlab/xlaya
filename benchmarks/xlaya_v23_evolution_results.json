@@ -1,0 +1,237 @@
+{
+  "ok": true,
+  "version": "2.3.0",
+  "leak_audit": {
+    "zero_leakage_verified": true,
+    "total_tasks": 125,
+    "positive_tasks": 98,
+    "negative_ood_tasks": 27,
+    "train_repos_count": 14,
+    "val_repos_count": 7,
+    "forbidden_repos_blocked": 15
+  },
+  "dataset": {
+    "snapshot_count": 92,
+    "total_py_files": 25301,
+    "total_chunks_evaluated": 281449,
+    "mean_chunks_per_task": 2251.6,
+    "splits": {
+      "train": 81,
+      "val": 44
+    },
+    "feature_extract_sec": 115.512
+  },
+  "funnel1_cuda_evolution": {
+    "device": "cuda",
+    "gpu_name": "NVIDIA GeForce RTX 5060 Ti",
+    "total_generations": 5000,
+    "pop_size": 256,
+    "total_genome_evaluations": 1280000,
+    "evolution_wall_sec": 74.8671,
+    "gamma_max": 1.45,
+    "phase1_e4b_sniper": {
+      "generations": 1800,
+      "w_core": [
+        0.17836,
+        0.228133,
+        0.08187,
+        0.166449,
+        0.065469,
+        0.053293,
+        -0.151443,
+        0.074983
+      ],
+      "train_fitness": 0.3747,
+      "val_fitness": 0.4939,
+      "platt_T": 1.67,
+      "platt_b": -0.795,
+      "conformal_q_hat": 0.5885
+    },
+    "phase2_31b_deep": {
+      "generations": 1800,
+      "w_anchor": [
+        0.167068,
+        0.296999,
+        0.045851,
+        0.155435,
+        0.067317,
+        0.062147,
+        -0.151591,
+        0.053592
+      ],
+      "w_residual": [
+        0.098415,
+        0.159503,
+        0.185096,
+        0.128404,
+        0.01622,
+        0.18358,
+        -0.178304,
+        0.050476
+      ],
+      "diversity_lambda": 0.16,
+      "train_fitness": 0.5351,
+      "val_fitness": 0.6262,
+      "platt_T": 1.67,
+      "platt_b": -0.795,
+      "conformal_q_hat": 0.5885
+    },
+    "phase3_e4b_sniper_distilled": {
+      "generations": 1400,
+      "w_core": [
+        0.167068,
+        0.296999,
+        0.045851,
+        0.155435,
+        0.067317,
+        0.062147,
+        -0.151591,
+        0.053592
+      ],
+      "train_fitness": 0.0221,
+      "val_fitness": 0.1482,
+      "platt_T": 1.67,
+      "platt_b": -0.795,
+      "conformal_q_hat": 0.5885
+    }
+  },
+  "disjoint_val_scorecard": {
+    "bm25_only_k3_800tok": {
+      "pos_file_recall_at_k": 0.4429,
+      "pos_task_hit_rate_at_k": 0.4571,
+      "multihop_recall_at_k": 0.25,
+      "pos_file_precision_at_k": 0.1619,
+      "pos_mrr": 0.3714,
+      "zero_safe_overall_score": 0.4205,
+      "test_echo_rate": 0.1439,
+      "mean_selected_tokens": 747.0,
+      "top1_ece_all": 0.1615,
+      "top1_ece_pos": 0.0952,
+      "top1_brier_all": 0.211,
+      "neg_abstain_rate": 0.3333,
+      "neg_wrong_confident_80_rate": 0.0,
+      "prob_min": 0.3937,
+      "prob_max": 0.4535,
+      "pos_prob_max": 0.4535,
+      "neg_prob_max": 0.4396
+    },
+    "bm25_only_k8_4096tok": {
+      "pos_file_recall_at_k": 0.6524,
+      "pos_task_hit_rate_at_k": 0.6857,
+      "multihop_recall_at_k": 0.4167,
+      "pos_file_precision_at_k": 0.1224,
+      "pos_mrr": 0.4195,
+      "zero_safe_overall_score": 0.5871,
+      "test_echo_rate": 0.1648,
+      "mean_selected_tokens": 2595.3,
+      "top1_ece_all": 0.1615,
+      "top1_ece_pos": 0.0952,
+      "top1_brier_all": 0.211,
+      "neg_abstain_rate": 0.3333,
+      "neg_wrong_confident_80_rate": 0.0,
+      "prob_min": 0.3937,
+      "prob_max": 0.4535,
+      "pos_prob_max": 0.4535,
+      "neg_prob_max": 0.4396
+    },
+    "phase1_e4b_sniper_k3_800tok": {
+      "pos_file_recall_at_k": 0.7024,
+      "pos_task_hit_rate_at_k": 0.7429,
+      "multihop_recall_at_k": 0.2917,
+      "pos_file_precision_at_k": 0.2476,
+      "pos_mrr": 0.6143,
+      "zero_safe_overall_score": 0.6951,
+      "test_echo_rate": 0.0152,
+      "mean_selected_tokens": 729.2,
+      "top1_ece_all": 0.041,
+      "top1_ece_pos": 0.0881,
+      "top1_brier_all": 0.2345,
+      "neg_abstain_rate": 0.6667,
+      "neg_wrong_confident_80_rate": 0.0,
+      "prob_min": 0.3915,
+      "prob_max": 0.4594,
+      "pos_prob_max": 0.4594,
+      "neg_prob_max": 0.4173
+    },
+    "phase2_31b_deep_k8_4096tok": {
+      "pos_file_recall_at_k": 0.831,
+      "pos_task_hit_rate_at_k": 0.8571,
+      "multihop_recall_at_k": 0.5417,
+      "pos_file_precision_at_k": 0.1286,
+      "pos_mrr": 0.6512,
+      "zero_safe_overall_score": 0.7973,
+      "test_echo_rate": 0.017,
+      "mean_selected_tokens": 2364.2,
+      "top1_ece_all": 0.0654,
+      "top1_ece_pos": 0.1188,
+      "top1_brier_all": 0.2379,
+      "neg_abstain_rate": 0.6667,
+      "neg_wrong_confident_80_rate": 0.0,
+      "prob_min": 0.3927,
+      "prob_max": 0.4599,
+      "pos_prob_max": 0.4599,
+      "neg_prob_max": 0.4157
+    },
+    "phase3_e4b_sniper_distilled_k3_800tok": {
+      "pos_file_recall_at_k": 0.7595,
+      "pos_task_hit_rate_at_k": 0.8,
+      "multihop_recall_at_k": 0.2917,
+      "pos_file_precision_at_k": 0.2667,
+      "pos_mrr": 0.6476,
+      "zero_safe_overall_score": 0.7405,
+      "test_echo_rate": 0.0152,
+      "mean_selected_tokens": 735.1,
+      "top1_ece_all": 0.0654,
+      "top1_ece_pos": 0.1188,
+      "top1_brier_all": 0.2379,
+      "neg_abstain_rate": 0.6667,
+      "neg_wrong_confident_80_rate": 0.0,
+      "prob_min": 0.3927,
+      "prob_max": 0.4599,
+      "pos_prob_max": 0.4599,
+      "neg_prob_max": 0.4157
+    }
+  },
+  "when2call_tool_gate_val": {
+    "train_rows": 8025,
+    "val_rows": 1616,
+    "val_binary_acc": 0.8137,
+    "val_tool_call_recall": 0.814,
+    "val_combined_abstain_recall": 0.8136,
+    "val_3way_acc": 0.7729,
+    "val_top1_ece": 0.0279
+  },
+  "funnel2_gates": {
+    "clean_subprocess_nano": {
+      "torch_in_sys_modules": false,
+      "delta_rss_mb": 10.414,
+      "elapsed_ms": 3.99,
+      "chunks_evaluated": 9,
+      "top1_heading": "ple_dev_29_metadata.json"
+    },
+    "sieve_genomes_bytes": 5679
+  },
+  "cross_benchmarks": {
+    "suite1_routing_labels": {
+      "fit_count": 40,
+      "test_count": 20,
+      "stage1_ensemble_zero_shot_acc": 0.6,
+      "stage2_ttthead_fitted_acc": 0.85,
+      "calibration_saved": true
+    },
+    "suite1_xerj_1108_boundary": {
+      "total_items": 120,
+      "fit_count": 72,
+      "blind_eval_count": 48,
+      "accuracy": 1.0,
+      "auto_route_precision": 1.0,
+      "auto_route_coverage": 1.0,
+      "wrong_confident_p80_rate": 0.0
+    },
+    "suite3_ple_29_cross_domain": {
+      "task_count": 29,
+      "nano_zero_shot_acc": 0.5862,
+      "ensemble_zero_shot_acc": 0.8621
+    }
+  }
+}
