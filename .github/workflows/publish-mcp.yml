@@ -1,0 +1,202 @@
+name: Publish PyPI & Official MCP Registry
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions: {}
+
+env:
+  MCP_PUBLISHER_VERSION: v1.8.1
+
+jobs:
+  build-and-verify:
+    name: Verify, Test & Build Wheel/Sdist
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Verify release tag matches pyproject.toml, server.json, and xlaya_mcp_server
+        run: |
+          python -B - <<'PY'
+          import json
+          import os
+          import pathlib
+          import tomllib
+          import xlaya_mcp_server
+
+          tag = os.environ["GITHUB_REF_NAME"]
+          expected = tag[1:] if tag.startswith("v") else tag
+
+          pyproject = tomllib.loads(pathlib.Path("pyproject.toml").read_text(encoding="utf-8"))
+          py_ver = pyproject["project"]["version"]
+          server = json.loads(pathlib.Path("server.json").read_text(encoding="utf-8"))
+          srv_ver = server["version"]
+          pkg_ver = server["packages"][0]["version"]
+          mcp_ver = xlaya_mcp_server.__version__
+
+          assert py_ver == expected, f"pyproject.toml version {py_ver!r} != tag {expected!r}"
+          assert pyproject["project"]["name"] == "xlaya-mcp", f"Unexpected project name: {pyproject['project']['name']!r}"
+          assert server["packages"][0]["identifier"] == "xlaya-mcp", "server.json package identifier must be xlaya-mcp"
+          assert srv_ver == expected, f"server.json version {srv_ver!r} != tag {expected!r}"
+          assert pkg_ver == expected, f"server.json packages[0].version {pkg_ver!r} != tag {expected!r}"
+          assert mcp_ver == expected, f"xlaya_mcp_server.__version__ {mcp_ver!r} != tag {expected!r}"
+          print(f"Verified version parity: {expected}")
+          PY
+
+      - name: Install build & test tools
+        run: python -m pip install --upgrade pip build pytest flake8
+
+      - name: Run lint, self-checks & unit tests
+        run: |
+          python -B xlaya_mcp_server.py --self-check
+          python -B laya_triage.py --self-test
+          flake8 --config .flake8
+          pytest -q
+
+      - name: Build sdist & wheel
+        run: python -m build
+
+      - name: Audit wheel & sdist allowlist (zero benchmarks/tests/Kaggle leakage)
+        run: |
+          python -B - <<'PY'
+          import pathlib
+          import tarfile
+          import zipfile
+
+          dist = pathlib.Path("dist")
+          wheels = sorted(dist.glob("*.whl"))
+          sdists = sorted(dist.glob("*.tar.gz"))
+          assert len(wheels) == 1 and len(sdists) == 1, f"Unexpected dist contents: {list(dist.iterdir())}"
+          assert wheels[0].name.startswith("xlaya_mcp-"), f"Unexpected wheel filename: {wheels[0].name}"
+          assert sdists[0].name.startswith("xlaya_mcp-"), f"Unexpected sdist filename: {sdists[0].name}"
+
+          forbidden_prefixes = ("benchmarks/", "tests/", "docs/", "skills/", "scripts/")
+
+          with zipfile.ZipFile(wheels[0]) as zf:
+              w_names = zf.namelist()
+              for name in w_names:
+                  assert not any(f"/{p}" in f"/{name}" for p in forbidden_prefixes), f"Forbidden wheel entry: {name}"
+              assert "laya_triage.py" in w_names
+              assert "xlaya_mcp_server.py" in w_names
+              assert "policies/sieve_genomes.json" in w_names
+              assert any(n.endswith("/licenses/LICENSE") for n in w_names), "Missing LICENSE in wheel"
+              assert any(n.endswith("/licenses/NOTICE") for n in w_names), "Missing NOTICE in wheel"
+              meta_name = [n for n in w_names if n.endswith(".dist-info/METADATA")][0]
+              meta_text = zf.read(meta_name).decode("utf-8")
+              assert "mcp-name: io.github.iscvlab/xlaya" in meta_text, "Missing mcp-name ownership marker in wheel METADATA"
+
+          with tarfile.open(sdists[0], "r:gz") as tf:
+              s_names = tf.getnames()
+              for name in s_names:
+                  rel = name.split("/", 1)[1] if "/" in name else name
+                  assert not rel.startswith(forbidden_prefixes), f"Forbidden sdist entry: {name}"
+              rel_set = {n.split("/", 1)[1] for n in s_names if "/" in n}
+              for req in (
+                  "LICENSE",
+                  "NOTICE",
+                  "README.md",
+                  "pyproject.toml",
+                  "server.json",
+                  "laya_triage.py",
+                  "xlaya_mcp_server.py",
+                  "policies/sieve_genomes.json",
+              ):
+                  assert req in rel_set, f"Missing required sdist entry: {req}"
+          print("Wheel & sdist allowlist audit passed.")
+          PY
+
+      - name: Smoke-test installed wheel console scripts in isolated venv
+        run: |
+          python -m venv /tmp/xlaya-smoke-venv
+          /tmp/xlaya-smoke-venv/bin/pip install --no-deps dist/*.whl
+          /tmp/xlaya-smoke-venv/bin/xlaya --self-test
+          /tmp/xlaya-smoke-venv/bin/xlaya-mcp --self-check
+
+      - name: Upload built distributions
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+
+  publish-pypi:
+    name: Publish to PyPI (OIDC Trusted Publishing)
+    needs: build-and-verify
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/xlaya-mcp
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Download built distributions
+        uses: actions/download-artifact@v4
+        with:
+          name: python-package-distributions
+          path: dist/
+
+      - name: Publish package to PyPI via OIDC
+        uses: pypa/gh-action-pypi-publish@release/v1
+
+  publish-mcp-registry:
+    name: Publish to Official MCP Registry (GitHub OIDC + Cosign)
+    needs: publish-pypi
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Cosign (SHA-pinned)
+        uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
+
+      - name: Download, Cosign-verify & install mcp-publisher
+        run: |
+          set -euo pipefail
+          os=$(uname -s | tr '[:upper:]' '[:lower:]')
+          arch=$(uname -m | sed -e 's/x86_64/amd64/' -e 's/aarch64/arm64/')
+          archive="mcp-publisher_${os}_${arch}.tar.gz"
+          base_url="https://github.com/modelcontextprotocol/registry/releases/download/${MCP_PUBLISHER_VERSION}"
+          curl -fsSLO "${base_url}/${archive}"
+          curl -fsSLO "${base_url}/${archive}.sigstore.json"
+          cosign verify-blob \
+            --bundle "${archive}.sigstore.json" \
+            --certificate-identity "https://github.com/modelcontextprotocol/registry/.github/workflows/release.yml@refs/tags/${MCP_PUBLISHER_VERSION}" \
+            --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
+            "${archive}"
+          tar -xzf "${archive}" mcp-publisher
+          chmod +x mcp-publisher
+
+      - name: Authenticate with Official MCP Registry via GitHub OIDC
+        run: ./mcp-publisher login github-oidc
+
+      - name: Wait for PyPI CDN propagation before MCP Registry verification
+        run: |
+          set -euo pipefail
+          ver="${GITHUB_REF_NAME#v}"
+          url="https://pypi.org/pypi/xlaya-mcp/${ver}/json"
+          for attempt in $(seq 1 18); do
+            code=$(curl -sS -o /dev/null -w "%{http_code}" "${url}" || true)
+            echo "PyPI propagation check ${attempt}/18 (${url}): HTTP ${code}"
+            if [ "${code}" = "200" ]; then
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "ERROR: ${url} did not return HTTP 200 after 18 attempts." >&2
+          exit 1
+
+      - name: Publish server.json to Official MCP Registry
+        run: ./mcp-publisher publish

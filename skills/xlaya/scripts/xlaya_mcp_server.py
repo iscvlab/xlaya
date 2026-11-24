@@ -12,11 +12,17 @@ import json
 import os
 import sys
 import threading
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
-__version__ = "2.3.0"
-
-sys.dont_write_bytecode = True
+__version__ = "2.3.1"
+PROTOCOL_VERSION_LATEST = "2025-03-26"
+SUPPORTED_PROTOCOL_VERSIONS: Tuple[str, ...] = ("2025-03-26", "2024-11-05")
+_REQUIRED_ANNOTATION_KEYS: Tuple[str, ...] = (
+    "readOnlyHint",
+    "destructiveHint",
+    "idempotentHint",
+    "openWorldHint",
+)
 
 # Enforce HuggingFace / Transformers Wire Purity before any backend import.
 os.environ.setdefault("HF_HUB_DISABLE_PROGRESS_BARS", "1")
@@ -26,7 +32,7 @@ if os.name == "nt":
     os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
 
 _SCRIPTS_DIR = os.path.dirname(os.path.abspath(__file__))
-if _SCRIPTS_DIR not in sys.path:
+if os.path.isfile(os.path.join(_SCRIPTS_DIR, "laya_triage.py")) and _SCRIPTS_DIR not in sys.path:
     sys.path.insert(0, _SCRIPTS_DIR)
 
 _JSONRPC_OUT = sys.stdout
@@ -38,7 +44,7 @@ _DEFAULT_PATTERN = "*.md,*.html,*.txt,*.json,*.jsonl,*.csv"
 
 def _get_backend() -> Any:
     """Lazily import `laya_triage` from the co-located `scripts/` directory."""
-    if _SCRIPTS_DIR not in sys.path:
+    if os.path.isfile(os.path.join(_SCRIPTS_DIR, "laya_triage.py")) and _SCRIPTS_DIR not in sys.path:
         sys.path.insert(0, _SCRIPTS_DIR)
     import laya_triage
 
@@ -153,6 +159,12 @@ MCP_TOOLS: List[Dict[str, Any]] = [
                     "description": "Optional target agent tier (`auto`, `e4b-sniper`, `31b-deep`).",
                 },
             },
+        },
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
         },
     },
     {
@@ -331,6 +343,12 @@ MCP_TOOLS: List[Dict[str, Any]] = [
             },
             "required": ["paths"],
         },
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": True,
+        },
     },
     {
         "name": "xlaya_predict",
@@ -425,6 +443,12 @@ MCP_TOOLS: List[Dict[str, Any]] = [
             },
             "required": ["questions"],
         },
+        "annotations": {
+            "readOnlyHint": True,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": True,
+        },
     },
     {
         "name": "xlaya_fit",
@@ -485,6 +509,12 @@ MCP_TOOLS: List[Dict[str, Any]] = [
             },
             "required": ["rows", "questions", "policy_path"],
         },
+        "annotations": {
+            "readOnlyHint": False,
+            "destructiveHint": True,
+            "idempotentHint": True,
+            "openWorldHint": True,
+        },
     },
     {
         "name": "xlaya_preload",
@@ -523,6 +553,12 @@ MCP_TOOLS: List[Dict[str, Any]] = [
                 },
             },
         },
+        "annotations": {
+            "readOnlyHint": False,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": True,
+        },
     },
     {
         "name": "xlaya_unload",
@@ -533,6 +569,12 @@ MCP_TOOLS: List[Dict[str, Any]] = [
         "inputSchema": {
             "type": "object",
             "properties": {},
+        },
+        "annotations": {
+            "readOnlyHint": False,
+            "destructiveHint": False,
+            "idempotentHint": True,
+            "openWorldHint": False,
         },
     },
 ]
@@ -698,21 +740,32 @@ def dispatch_mcp_tool(name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
     raise ValueError(f"Unknown MCP tool: {name}")
 
 
+def _negotiate_protocol_version(requested: Any) -> str:
+    """Negotiate MCP protocol version (`2025-03-26` default; explicit `2024-11-05` fallback)."""
+    if isinstance(requested, str):
+        cleaned = requested.strip()
+        if cleaned in SUPPORTED_PROTOCOL_VERSIONS:
+            return cleaned
+    return PROTOCOL_VERSION_LATEST
+
+
 def handle_jsonrpc_request(req: Dict[str, Any]) -> Optional[Dict[str, Any]]:
     """Process a single JSON-RPC 2.0 request and return the response dictionary (or `None`)."""
     method = str(req.get("method", ""))
     req_id = req.get("id")
-    params = req.get("params") or {}
+    raw_params = req.get("params")
+    params = raw_params if isinstance(raw_params, dict) else {}
 
     if method == "notifications/initialized" or (method.startswith("notifications/") and req_id is None):
         return None
 
     if method == "initialize":
+        negotiated_version = _negotiate_protocol_version(params.get("protocolVersion"))
         return {
             "jsonrpc": "2.0",
             "id": req_id,
             "result": {
-                "protocolVersion": "2024-11-05",
+                "protocolVersion": negotiated_version,
                 "capabilities": {"tools": {}},
                 "serverInfo": {"name": "xlaya-mcp", "version": __version__},
             },
@@ -778,23 +831,36 @@ def handle_jsonrpc_request(req: Dict[str, Any]) -> Optional[Dict[str, Any]]:
 
 
 def run_self_check() -> Dict[str, Any]:
-    """Validate JSON-RPC `initialize` + `tools/list` schema structure without stdin."""
-    init_resp = handle_jsonrpc_request({"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {}})
-    if not init_resp or init_resp.get("result", {}).get("protocolVersion") != "2024-11-05":
-        raise RuntimeError("initialize protocolVersion check failed")
-    server_info = init_resp["result"].get("serverInfo", {})
-    if server_info.get("name") != "xlaya-mcp" or server_info.get("version") != __version__:
-        raise RuntimeError("initialize serverInfo check failed")
+    """Validate JSON-RPC `initialize` negotiation + `tools/list` schema & `annotations` without stdin."""
+    init_cases = (
+        ({}, PROTOCOL_VERSION_LATEST),
+        ({"protocolVersion": "2025-03-26"}, "2025-03-26"),
+        ({"protocolVersion": "2099-01-01"}, PROTOCOL_VERSION_LATEST),
+        ({"protocolVersion": "2024-11-05"}, "2024-11-05"),
+    )
+    for idx, (init_params, expected_proto) in enumerate(init_cases, start=1):
+        init_resp = handle_jsonrpc_request(
+            {"jsonrpc": "2.0", "id": idx, "method": "initialize", "params": init_params}
+        )
+        got_proto = (init_resp or {}).get("result", {}).get("protocolVersion")
+        if got_proto != expected_proto:
+            raise RuntimeError(
+                f"initialize protocolVersion check failed for {init_params!r}: "
+                f"expected {expected_proto!r}, got {got_proto!r}"
+            )
+        server_info = (init_resp or {})["result"].get("serverInfo", {})
+        if server_info.get("name") != "xlaya-mcp" or server_info.get("version") != __version__:
+            raise RuntimeError("initialize serverInfo check failed")
 
     notif_resp = handle_jsonrpc_request({"jsonrpc": "2.0", "method": "notifications/initialized"})
     if notif_resp is not None:
         raise RuntimeError("notifications/initialized must return None")
 
-    ping_resp = handle_jsonrpc_request({"jsonrpc": "2.0", "id": 2, "method": "ping"})
+    ping_resp = handle_jsonrpc_request({"jsonrpc": "2.0", "id": 10, "method": "ping"})
     if not ping_resp or ping_resp.get("result") != {}:
         raise RuntimeError("ping check failed")
 
-    list_resp = handle_jsonrpc_request({"jsonrpc": "2.0", "id": 3, "method": "tools/list"})
+    list_resp = handle_jsonrpc_request({"jsonrpc": "2.0", "id": 11, "method": "tools/list"})
     tools = (list_resp or {}).get("result", {}).get("tools", [])
     expected_names = [
         "xlaya_status",
@@ -811,8 +877,17 @@ def run_self_check() -> Dict[str, Any]:
         schema = tool.get("inputSchema", {})
         if schema.get("type") != "object" or not isinstance(schema.get("properties"), dict):
             raise RuntimeError(f"Invalid inputSchema for tool {tool.get('name')}")
+        annotations = tool.get("annotations")
+        if not isinstance(annotations, dict):
+            raise RuntimeError(f"Missing annotations dict for tool {tool.get('name')}")
+        for hint_key in _REQUIRED_ANNOTATION_KEYS:
+            if hint_key not in annotations or type(annotations[hint_key]) is not bool:
+                raise RuntimeError(
+                    f"Invalid annotation '{hint_key}' for tool {tool.get('name')}: "
+                    f"{annotations.get(hint_key)!r}"
+                )
 
-    unknown_resp = handle_jsonrpc_request({"jsonrpc": "2.0", "id": 4, "method": "unknown/method"})
+    unknown_resp = handle_jsonrpc_request({"jsonrpc": "2.0", "id": 12, "method": "unknown/method"})
     if not unknown_resp or unknown_resp.get("error", {}).get("code") != -32601:
         raise RuntimeError("unknown method -32601 check failed")
 
@@ -820,8 +895,10 @@ def run_self_check() -> Dict[str, Any]:
         "ok": True,
         "server": "xlaya-mcp",
         "version": __version__,
-        "protocolVersion": "2024-11-05",
+        "protocolVersion": PROTOCOL_VERSION_LATEST,
+        "supportedProtocolVersions": list(SUPPORTED_PROTOCOL_VERSIONS),
         "tools": actual_names,
+        "annotations_verified": True,
         "idle_ttl_sec": _get_idle_ttl_sec(),
     }
 
@@ -837,21 +914,24 @@ def _reconfigure_utf8(stream: Any) -> None:
 def main(argv: Optional[List[str]] = None) -> int:
     """Run the JSON-RPC 2.0 MCP server loop over `stdin`/`_JSONRPC_OUT` with Wire Purity."""
     global _JSONRPC_OUT
+    sys.dont_write_bytecode = True
     args = list(sys.argv[1:] if argv is None else argv)
 
-    _JSONRPC_OUT = sys.stdout
+    prev_stdout = sys.stdout
+    prev_jsonrpc_out = _JSONRPC_OUT
+    _JSONRPC_OUT = prev_stdout
     _reconfigure_utf8(sys.stdin)
     _reconfigure_utf8(_JSONRPC_OUT)
     _reconfigure_utf8(sys.stderr)
     sys.stdout = sys.stderr
 
-    if "--self-check" in args:
-        summary = run_self_check()
-        _JSONRPC_OUT.write(json.dumps(summary, ensure_ascii=False) + "\n")
-        _JSONRPC_OUT.flush()
-        return 0
-
     try:
+        if "--self-check" in args:
+            summary = run_self_check()
+            _JSONRPC_OUT.write(json.dumps(summary, ensure_ascii=False) + "\n")
+            _JSONRPC_OUT.flush()
+            return 0
+
         for raw_line in sys.stdin:
             line = raw_line.strip()
             if not line:
@@ -870,6 +950,8 @@ def main(argv: Optional[List[str]] = None) -> int:
                 _JSONRPC_OUT.flush()
     finally:
         _cancel_idle_timer()
+        sys.stdout = prev_stdout
+        _JSONRPC_OUT = prev_jsonrpc_out
     return 0
 
 

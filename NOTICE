@@ -1,0 +1,12 @@
+XLaya
+Copyright (c) 2026 ISCV | Isocurve Research Lab (@iscvlab) & Napat Phasundhiae (@napattan)
+
+Upstream Attribution Notice:
+Stage 1 (non-autoregressive ModernBERT-large & mmBERT decision heads) and
+Stage 2 (conformal vega-U escalation) interoperate with ConvAI Innovations'
+`laya` (https://github.com/NandhaKishorM/laya) and `vegaml` libraries, released
+under the Apache-2.0 / MIT open-source licenses (Copyright (c) ConvAI Innovations).
+
+Third-Party Dataset & Template Notices:
+- `benchmarks/data/ple_dev_29_metadata.json` and generated Google ADK export
+  templates are released under the Apache License, Version 2.0.

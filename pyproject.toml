@@ -1,0 +1,79 @@
+[build-system]
+requires = ["hatchling>=1.25.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "xlaya-mcp"
+version = "2.3.1"
+description = "Local 5-profile semantic triage, AST code-graph sieve & conformal decision MCP server"
+readme = "README.md"
+requires-python = ">=3.9"
+license = "MIT"
+license-files = ["LICENSE", "NOTICE"]
+authors = [
+  { name = "ISCV | Isocurve Research Lab (@iscvlab)" },
+  { name = "Napat (Tan) Phasundhiae" },
+]
+keywords = [
+  "mcp",
+  "model-context-protocol",
+  "semantic-triage",
+  "code-graph",
+  "ast",
+  "conformal-prediction",
+  "local-ai",
+  "agent-tools",
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Topic :: Software Development :: Quality Assurance",
+]
+dependencies = []
+
+[project.optional-dependencies]
+neural = [
+  "laya>=0.4.31",
+  "vegaml>=0.16.1",
+  "torch",
+]
+dev = [
+  "pytest",
+  "flake8",
+]
+
+[project.urls]
+Homepage = "https://github.com/iscvlab/xlaya"
+Repository = "https://github.com/iscvlab/xlaya"
+Issues = "https://github.com/iscvlab/xlaya/issues"
+
+[project.scripts]
+xlaya-mcp = "xlaya_mcp_server:main"
+xlaya = "laya_triage:main"
+
+[tool.hatch.build.targets.wheel]
+only-include = [
+  "laya_triage.py",
+  "xlaya_mcp_server.py",
+  "policies/sieve_genomes.json",
+]
+
+[tool.hatch.build.targets.sdist]
+only-include = [
+  "LICENSE",
+  "NOTICE",
+  "README.md",
+  "pyproject.toml",
+  "server.json",
+  "laya_triage.py",
+  "xlaya_mcp_server.py",
+  "policies/sieve_genomes.json",
+]

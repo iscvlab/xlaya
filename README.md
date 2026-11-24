@@ -1,6 +1,8 @@
 # XLaya (`/xlaya`) - 5-Profile Hardware-Adaptive System 1 → System 1.5 Semantic Triage, AST Code-Graph Sieve & Conformal Decision Sidecar
 
-[![Release](https://img.shields.io/badge/Release-v2.3.0-121417?style=flat-square)](https://github.com/iscvlab/xlaya)
+<!-- mcp-name: io.github.iscvlab/xlaya -->
+
+[![Release](https://img.shields.io/badge/Release-v2.3.1-121417?style=flat-square)](https://github.com/iscvlab/xlaya)
 [![License: MIT](https://img.shields.io/badge/License-MIT-059669?style=flat-square)](./LICENSE)
 [![Nano RSS](https://img.shields.io/badge/Nano%20Profile-10.41%20MB%20RSS%20(0%20Torch)-059669?style=flat-square)](#tldr)
 [![Warm MCP](https://img.shields.io/badge/Warm%20MCP-~30%20ms%20(6%20Tools)-D97706?style=flat-square)](#2-empirical-4-axis-benchmarks-rtx-5060-ti-16-gb-vram)
@@ -15,7 +17,7 @@
   <img src="./docs/figures/xlaya_v23_cover_1120x560.png" alt="XLaya v2.3 & XBoost v3.5: Regime-Invariant Code-Graph Sieves & Conformal Triage for Gemma 4" width="100%" />
 </p>
 
-> **Gemma 4 Developer Agent Paper Track**: [Official Research Writeup on Kaggle](https://www.kaggle.com/competitions/gemma-4-developer-agent-paper/writeups/new-writeup-1794525023839) (`Overall Best Paper` / `Best New Resource` / `Best New Application`) • **Repository**: `iscvlab/xlaya` (`v2.3.0`, core [`MIT License`](./LICENSE); `benchmarks/data/ple_dev_29_metadata.json` & generated ADK exports `Apache-2.0`).
+> **Gemma 4 Developer Agent Paper Track**: [Official Research Writeup on Kaggle](https://www.kaggle.com/competitions/gemma-4-developer-agent-paper/writeups/new-writeup-1794525023839) (`Overall Best Paper` / `Best New Resource` / `Best New Application`) • **Repository**: `iscvlab/xlaya` (`v2.3.1`, core [`MIT License`](./LICENSE) + [`NOTICE`](./NOTICE); `benchmarks/data/ple_dev_29_metadata.json` & generated ADK exports `Apache-2.0`).
 
 **XLaya** (`iscvlab/xlaya`, slash command `/xlaya`, legacy alias `/laya`) is a 100% pure-local, non-autoregressive **5-Profile System 1 → System 1.5 Semantic Decision, Regime-Invariant AST Code-Graph Sieve, 2-Stage Tool-Schema Gate, Joint NLI Contradiction Triad, Thorough Scan & Conformal Triage Sidecar** (`v2.3.0`) engineered by **[ISCV | Isocurve Research Lab (`@iscvlab`)](https://github.com/iscvlab)**. Powered by **[`laya 0.4.31+`](https://github.com/NandhaKishorM/laya)** (`ModernBERT-large` `en`, `subfolder="typed-decisions"`, calibrated `0.45*en + 0.55*typed` ensemble & `mmBERT`, `output_tokens: 0`), **`vega-U` (`vegaml 0.16.1+`, `0.8b` / `4b` / `gemma-1b` / `27b`)**, and a **100% repo-disjoint CUDA-evolved 8-feature AST + call-graph + Corpus-IDF simplex sieve (`policies/sieve_genomes.json`, `5,679 B` LF / `6,020 B` CRLF)**, it runs across **`--profile auto|nano|edge|workstation|max`** and **`--agent-tier auto|e4b-sniper|31b-deep`** as a **warm resident JSON-RPC 2.0 `stdio` MCP server (`xlaya_mcp_server.py`, `6` tools, `~30 ms` warm inference)**, a **standalone Python CLI (`laya_triage.py`)**, and a **portable AI Agent Skill (`skills/xlaya/SKILL.md`)** across **any AI coding agent — cloud, IDE, CLI, or local LLM** (`Claude`, `Grok`, `Gemini / Antigravity`, `Cursor`, `Codex`, `Ollama`, `OpenHands`, `Cline`, `Google ADK`, etc.).
 
@@ -304,8 +306,8 @@ XERJ \texttt{\#1108} & \textbf{\textsc{XLaya} Standalone / Ensemble (PASS)} & \t
 pip install "laya>=0.4.31" "vegaml>=0.16.1" torch
 ```
 
-### B. Register the Resident MCP Server (`xlaya_mcp_server.py` — `6` Tools, `~30 ms` Warm)
-Add `xlaya` to your MCP client configuration (`mcp_config.json`, Claude Desktop, Cursor, Antigravity, Windsurf, or Cline):
+### B. Register the Resident MCP Server (`xlaya_mcp_server.py` — `6` Tools, MCP `2025-03-26`, `~30 ms` Warm)
+Add `xlaya` to your MCP client configuration (`mcp_config.json`, Claude Desktop, Cursor, Antigravity, Windsurf, or Cline). All 6 tools expose explicit MCP `2025-03-26` `ToolAnnotations` (`readOnlyHint`, `destructiveHint`, `idempotentHint`, `openWorldHint`) with `2024-11-05` fallback negotiation:
 ```json
 {
   "mcpServers": {
@@ -320,12 +322,15 @@ Add `xlaya` to your MCP client configuration (`mcp_config.json`, Claude Desktop,
 }
 ```
 
+> **PyPI & Official MCP Registry Packaging (`PREPARED (pending tag release)`)**:
+> Package metadata (`pyproject.toml`, PyPI distribution `xlaya-mcp` exposing console scripts `xlaya-mcp` and `xlaya`), Official MCP Registry manifest (`server.json` for `io.github.iscvlab/xlaya`), and OIDC Trusted Publishing + Sigstore Cosign release workflow (`.github/workflows/publish-mcp.yml`) are **PREPARED (pending tag release)**. Once the tagged release is live on PyPI, clients can launch the MCP server directly via `uvx xlaya-mcp` (or install locally via `pip install xlaya-mcp` / `pip install "xlaya-mcp[neural]"`).
+
 | Resident MCP Tool | Core Parameters | Primary Use Case |
 | :--- | :--- | :--- |
 | **`xlaya_triage`** | `paths`, `mode` (`shortlist\|contradiction\|rubric\|classify`), `query`, `ssot`, `lang` (`auto\|en\|multi\|typed\|ensemble`), `profile` (`auto\|nano\|edge\|workstation\|max`), `agent_tier` (`auto\|e4b-sniper\|31b-deep`), `sieve_weights`, `thorough`, `rubric_preset` (`default\|architecture\|code_audit\|doc_sync\|research`), `views` (`1\|2\|3`), `policy_path`, `vega`, `vega_model` (`auto\|0.8b\|4b\|gemma-1b\|27b\|none`), `lexical_prefilter` | End-to-end Stage 0 → Stage 1 → Stage 2 directory/file/Python-AST sweep returning `#L<start>-L<end>` spans, code-sieve probabilities, 4-facet scores, `disagreement` gate, and `file_summaries` |
 | **`xlaya_predict`** | `questions`, `state` or `states`, `model` (`auto\|en\|multi\|typed\|ensemble`), `profile` (`auto\|nano\|edge\|workstation\|max`), `vega`, `vega_model` (`auto\|0.8b\|4b\|gemma-1b\|27b\|none`), `views` (`1\|2\|3`), `policy_path`, `image`, `audio`, `video` | In-memory, zero-torch `nano`, or local multimodal (`image`/`audio`/`video`) `choice`, `score`, and `noul` evaluation (auto-runs Head-Language Guard, `views` debiasing & `predict_tournament`) |
 | **`xlaya_fit`** | `rows` (`list[dict]` or `.csv`/`.jsonl` path), `questions`, `policy_path`, `vega_model="0.8b"`, `device="auto"`, `folds=5`, `calibrate=true`, `target_precision=0.95` | Fits and persists a `VegaAgent` `TTTHead` + split-conformal policy (`heads.npz`, `calibration.json`, `manifest.json`, `questions.json`) with OOD `outbound` centroid guard |
-| **`xlaya_status`** | `profile="auto"` (`auto\|nano\|edge\|workstation\|max`) | Inspects warm-loaded models (`en`, `multi`, `typed`, `ensemble`, `vegaml`), active hardware profile & GPU/MPS/CPU device, MCP version (`2.3.0`), and `LAYA_IDLE_TTL_SEC` |
+| **`xlaya_status`** | `profile="auto"` (`auto\|nano\|edge\|workstation\|max`) | Inspects warm-loaded models (`en`, `multi`, `typed`, `ensemble`, `vegaml`), active hardware profile & GPU/MPS/CPU device, MCP version (`2.3.1`), and `LAYA_IDLE_TTL_SEC` |
 | **`xlaya_preload`** | `models=["en", "multi", "typed", "ensemble"]`, `vega=false`, `vega_model="auto"`, `device="auto"` | Pre-warms checkpoints in RAM/VRAM ahead of latency-critical sweeps |
 | **`xlaya_unload`** | *(none)* | Immediately evicts cached models and reclaims CPU RAM and CUDA VRAM |
 
@@ -385,10 +390,16 @@ chmod +x scripts/install.sh
 ```text
 xlaya/
 ├── README.md                                  # Flagship architecture, 5-profile & 4-axis benchmarks
-├── LICENSE                                    # MIT License + ConvAI Innovations upstream notice
+├── LICENSE                                    # Pure OSI MIT License
+├── NOTICE                                     # ConvAI Innovations upstream attribution & Apache-2.0 notices
+├── pyproject.toml                             # Hatchling PyPI packaging (xlaya-mcp / xlaya; runtime allowlist)
+├── server.json                                # Official MCP Registry manifest (io.github.iscvlab/xlaya)
 ├── llms.txt                                   # Concise machine-readable entrypoint index for LLMs
 ├── laya_triage.py                             # Standalone 3-stage CLI, AST chunker & code-sieve engine
-├── xlaya_mcp_server.py                        # Zero-extra-dependency JSON-RPC 2.0 stdio MCP server
+├── xlaya_mcp_server.py                        # Zero-extra-dependency JSON-RPC 2.0 stdio MCP server (2025-03-26)
+├── .github/
+│   └── workflows/
+│       └── publish-mcp.yml                    # Tag-triggered PyPI OIDC + Official MCP Registry Cosign workflow
 ├── docs/
 │   └── figures/                               # Academic White-Theme cover & Figures 1-4 (PNG)
 │       ├── xlaya_v23_cover_1120x560.png
@@ -410,6 +421,7 @@ xlaya/
 │           ├── laya_triage.py
 │           └── xlaya_mcp_server.py
 ├── tests/
+│   ├── test_mcp_annotations.py                # MCP 2025-03-26 protocol negotiation & 6-tool ToolAnnotations tests
 │   └── test_v23_sieve_and_adk.py              # Deterministic pytest suite (G-01 through G-08, Container-A & ADK parity)
 └── benchmarks/
     ├── data/                                  # Clean Apache-2.0 fixtures (routing_labels, xerj#1108, PLE 29)

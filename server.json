@@ -1,0 +1,40 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.iscvlab/xlaya",
+  "title": "XLaya",
+  "description": "Local 5-profile semantic triage, AST code-graph sieve & conformal decision MCP server",
+  "version": "2.3.1",
+  "websiteUrl": "https://github.com/iscvlab/xlaya",
+  "repository": {
+    "url": "https://github.com/iscvlab/xlaya",
+    "source": "github"
+  },
+  "packages": [
+    {
+      "registryType": "pypi",
+      "registryBaseUrl": "https://pypi.org",
+      "identifier": "xlaya-mcp",
+      "version": "2.3.1",
+      "runtimeHint": "uvx",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "LAYA_IDLE_TTL_SEC",
+          "description": "Idle seconds before auto-unloading warm models from RAM/VRAM (0 disables)",
+          "default": "1800",
+          "isRequired": false,
+          "isSecret": false
+        },
+        {
+          "name": "XLAYA_PROFILE",
+          "description": "Hardware profile (auto, nano, edge, workstation, max)",
+          "default": "auto",
+          "isRequired": false,
+          "isSecret": false
+        }
+      ]
+    }
+  ]
+}
