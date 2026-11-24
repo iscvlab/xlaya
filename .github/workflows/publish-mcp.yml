@@ -54,7 +54,7 @@ jobs:
           PY
 
       - name: Install build & test tools
-        run: python -m pip install --upgrade pip build pytest flake8
+        run: python -m pip install --upgrade pip build pytest flake8 numpy
 
       - name: Run lint, self-checks & unit tests
         run: |
